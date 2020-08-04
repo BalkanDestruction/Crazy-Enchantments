@@ -26,6 +26,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Arnah
@@ -136,20 +137,21 @@ public class ArmorListener implements Listener {
                 }
                 final ItemStack It = newArmorPiece.clone();
                 final ArmorEquipEvent armorEquipEvent = new ArmorEquipEvent(player, method, newArmorType, oldArmorPiece, newArmorPiece);
+                assert plugin != null;
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                     ItemStack I = e.getWhoClicked().getInventory().getItem(e.getSlot());
                     if (e.getInventory().getType().equals(InventoryType.PLAYER)) {
                         if (e.getSlot() == ArmorType.HELMET.getSlot()) {
-                            I = e.getWhoClicked().getEquipment().getHelmet();
+                            I = Objects.requireNonNull(e.getWhoClicked().getEquipment()).getHelmet();
                         }
                         if (e.getSlot() == ArmorType.CHESTPLATE.getSlot()) {
-                            I = e.getWhoClicked().getEquipment().getChestplate();
+                            I = Objects.requireNonNull(e.getWhoClicked().getEquipment()).getChestplate();
                         }
                         if (e.getSlot() == ArmorType.LEGGINGS.getSlot()) {
-                            I = e.getWhoClicked().getEquipment().getLeggings();
+                            I = Objects.requireNonNull(e.getWhoClicked().getEquipment()).getLeggings();
                         }
                         if (e.getSlot() == ArmorType.BOOTS.getSlot()) {
-                            I = e.getWhoClicked().getEquipment().getBoots();
+                            I = Objects.requireNonNull(e.getWhoClicked().getEquipment()).getBoots();
                         }
                     }
                     if (I == null) {
@@ -175,12 +177,12 @@ public class ArmorListener implements Listener {
                         if (ArmorType.matchType(oldArmorPiece) != null || oldArmorPiece.getType() == Material.AIR) {
                             if (ArmorType.matchType(newArmorPiece) != null || newArmorPiece == null) {
                                 if (ArmorType.matchType(oldArmorPiece) != null) {
-                                    if (e.getRawSlot() != ArmorType.matchType(oldArmorPiece).getSlot()) {
+                                    if (e.getRawSlot() != Objects.requireNonNull(ArmorType.matchType(oldArmorPiece)).getSlot()) {
                                         return;
                                     }
                                 }
                                 if (ArmorType.matchType(newArmorPiece) != null) {
-                                    if (e.getRawSlot() != ArmorType.matchType(newArmorPiece).getSlot()) {
+                                    if (e.getRawSlot() != Objects.requireNonNull(ArmorType.matchType(newArmorPiece)).getSlot()) {
                                         return;
                                     }
                                 }
@@ -237,7 +239,7 @@ public class ArmorListener implements Listener {
             Location loc = e.getBlock().getLocation();
             for (Player p : loc.getWorld().getPlayers()) {
                 if (loc.getBlockY() - p.getLocation().getBlockY() >= -1 && loc.getBlockY() - p.getLocation().getBlockY() <= 1) {
-                    if (p.getInventory().getHelmet() == null && type.equals(ArmorType.HELMET) || p.getInventory().getChestplate() == null && type.equals(ArmorType.CHESTPLATE) || p.getInventory().getLeggings() == null && type.equals(ArmorType.LEGGINGS) || p.getInventory().getBoots() == null && type.equals(ArmorType.BOOTS)) {
+                    if (p.getInventory().getHelmet() == null && Objects.requireNonNull(type).equals(ArmorType.HELMET) || p.getInventory().getChestplate() == null && Objects.requireNonNull(type).equals(ArmorType.CHESTPLATE) || p.getInventory().getLeggings() == null && Objects.requireNonNull(type).equals(ArmorType.LEGGINGS) || p.getInventory().getBoots() == null && Objects.requireNonNull(type).equals(ArmorType.BOOTS)) {
                         if (e.getBlock().getState() instanceof org.bukkit.block.Dispenser) {
                             org.bukkit.block.Dispenser dispenser = (org.bukkit.block.Dispenser) e.getBlock().getState();
                             org.bukkit.material.Dispenser dis = (org.bukkit.material.Dispenser) dispenser.getData();
@@ -286,7 +288,7 @@ public class ArmorListener implements Listener {
     public void playerDeathEvent(PlayerDeathEvent e) {
         Player p = e.getEntity();
         for (ItemStack i : p.getInventory().getArmorContents()) {
-            if (i != null && !i.getType().equals(Material.AIR)) {
+            if (!i.getType().equals(Material.AIR)) {
                 Bukkit.getServer().getPluginManager().callEvent(new ArmorEquipEvent(p, EquipMethod.DEATH, ArmorType.matchType(i), i, null));
                 // No way to cancel a death event.
             }

@@ -11,13 +11,13 @@ import java.util.Random;
 
 public class CEBook {
 
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
     private CEnchantment enchantment;
     private int amount;
     private int level;
     private boolean glowing;
     private int destroyRate;
     private int successRate;
-    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
 
     /**
      * @param enchantment Enchantment you want.

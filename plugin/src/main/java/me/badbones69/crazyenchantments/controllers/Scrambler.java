@@ -23,10 +23,11 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Scrambler implements Listener {
 
-    public static HashMap<Player, BukkitTask> roll = new HashMap<>();
+    public static final HashMap<Player, BukkitTask> roll = new HashMap<>();
     private static final CrazyEnchantments ce = CrazyEnchantments.getInstance();
     private static ItemBuilder scramblerItem;
     private static ItemBuilder pointer;
@@ -36,12 +37,12 @@ public class Scrambler implements Listener {
     public static void loadScrambler() {
         FileConfiguration config = Files.CONFIG.getFile();
         scramblerItem = new ItemBuilder()
-                .setMaterial(config.getString("Settings.Scrambler.Item"))
+                .setMaterial(Objects.requireNonNull(config.getString("Settings.Scrambler.Item")))
                 .setName(config.getString("Settings.Scrambler.Name"))
                 .setLore(config.getStringList("Settings.Scrambler.Lore"))
                 .setGlowing(config.getBoolean("Settings.Scrambler.Glowing"));
         pointer = new ItemBuilder()
-                .setMaterial(config.getString("Settings.Scrambler.GUI.Pointer.Item"))
+                .setMaterial(Objects.requireNonNull(config.getString("Settings.Scrambler.GUI.Pointer.Item")))
                 .setName(config.getString("Settings.Scrambler.GUI.Pointer.Name"))
                 .setLore(config.getStringList("Settings.Scrambler.GUI.Pointer.Lore"));
         animationToggle = Files.CONFIG.getFile().getBoolean("Settings.Scrambler.GUI.Toggle");
@@ -113,7 +114,7 @@ public class Scrambler implements Listener {
             @Override
             public void run() {
                 if (full <= 50) {//When Spinning
-                    moveItems(inventory, player, book);
+                    moveItems(inventory, book);
                     setGlass(inventory);
                     player.playSound(player.getLocation(), ce.getSound("UI_BUTTON_CLICK", "CLICK"), 1, 1);
                 }
@@ -125,7 +126,7 @@ public class Scrambler implements Listener {
                 full++;
                 if (full > 51) {
                     if (slowSpin().contains(time)) {//When Slowing Down
-                        moveItems(inventory, player, book);
+                        moveItems(inventory, book);
                         setGlass(inventory);
                         player.playSound(player.getLocation(), ce.getSound("UI_BUTTON_CLICK", "CLICK"), 1, 1);
                     }
@@ -134,7 +135,7 @@ public class Scrambler implements Listener {
                         player.playSound(player.getLocation(), ce.getSound("ENTITY_PLAYER_LEVELUP", "LEVEL_UP"), 1, 1);
                         cancel();
                         roll.remove(player);
-                        ItemStack item = inventory.getItem(13).clone();
+                        ItemStack item = Objects.requireNonNull(inventory.getItem(13)).clone();
                         item.setType(ce.getEnchantmentBookItem().getType());
                         item.setDurability(ce.getEnchantmentBookItem().getDurability());
                         if (Methods.isInventoryFull(player)) {
@@ -164,7 +165,7 @@ public class Scrambler implements Listener {
         return slow;
     }
 
-    private static void moveItems(Inventory inv, Player player, ItemStack book) {
+    private static void moveItems(Inventory inv, ItemStack book) {
         List<ItemStack> items = new ArrayList<>();
         for (int slot = 9; slot > 8 && slot < 17; slot++) {
             items.add(inv.getItem(slot));
@@ -180,21 +181,20 @@ public class Scrambler implements Listener {
     @EventHandler
     public void onReRoll(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
-        if (e.getInventory() != null) {
-            ItemStack book = e.getCurrentItem() != null ? e.getCurrentItem() : new ItemStack(Material.AIR);
-            ItemStack scrambler = e.getCursor() != null ? e.getCursor() : new ItemStack(Material.AIR);
-            if (book.getType() != Material.AIR && scrambler.getType() != Material.AIR) {
-                if (book.getAmount() == 1 && scrambler.getAmount() == 1) {
-                    if (getScramblers().isSimilar(scrambler)) {
-                        if (ce.isEnchantmentBook(book)) {
-                            e.setCancelled(true);
-                            player.setItemOnCursor(new ItemStack(Material.AIR));
-                            if (animationToggle) {
-                                e.setCurrentItem(new ItemStack(Material.AIR));
-                                openScrambler(player, book);
-                            } else {
-                                e.setCurrentItem(getNewScrambledBook(book));
-                            }
+        e.getInventory();
+        ItemStack book = e.getCurrentItem() != null ? e.getCurrentItem() : new ItemStack(Material.AIR);
+        ItemStack scrambler = e.getCursor() != null ? e.getCursor() : new ItemStack(Material.AIR);
+        if (book.getType() != Material.AIR && scrambler.getType() != Material.AIR) {
+            if (book.getAmount() == 1 && scrambler.getAmount() == 1) {
+                if (getScramblers().isSimilar(scrambler)) {
+                    if (ce.isEnchantmentBook(book)) {
+                        e.setCancelled(true);
+                        player.setItemOnCursor(new ItemStack(Material.AIR));
+                        if (animationToggle) {
+                            e.setCurrentItem(new ItemStack(Material.AIR));
+                            openScrambler(player, book);
+                        } else {
+                            e.setCurrentItem(getNewScrambledBook(book));
                         }
                     }
                 }
@@ -204,10 +204,9 @@ public class Scrambler implements Listener {
 
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
-        if (e.getInventory() != null) {
-            if (e.getView().getTitle().equals(guiName)) {
-                e.setCancelled(true);
-            }
+        e.getInventory();
+        if (e.getView().getTitle().equals(guiName)) {
+            e.setCancelled(true);
         }
     }
 

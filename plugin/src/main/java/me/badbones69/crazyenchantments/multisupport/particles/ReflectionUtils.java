@@ -45,7 +45,7 @@ public final class ReflectionUtils {
     public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes) throws NoSuchMethodException {
         Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
         for (Constructor<?> constructor : clazz.getConstructors()) {
-            if (!DataType.compare(DataType.getPrimitive(constructor.getParameterTypes()), primitiveTypes)) {
+            if (DataType.compare(DataType.getPrimitive(constructor.getParameterTypes()), primitiveTypes)) {
                 continue;
             }
             return constructor;
@@ -117,7 +117,7 @@ public final class ReflectionUtils {
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
         Class<?>[] primitiveTypes = DataType.getPrimitive(parameterTypes);
         for (Method method : clazz.getMethods()) {
-            if (!method.getName().equals(methodName) || !DataType.compare(DataType.getPrimitive(method.getParameterTypes()), primitiveTypes)) {
+            if (!method.getName().equals(methodName) || DataType.compare(DataType.getPrimitive(method.getParameterTypes()), primitiveTypes)) {
                 continue;
             }
             return method;
@@ -543,7 +543,7 @@ public final class ReflectionUtils {
          */
         public static boolean compare(Class<?>[] primary, Class<?>[] secondary) {
             if (primary == null || secondary == null || primary.length != secondary.length) {
-                return false;
+                return true;
             }
             for (int index = 0; index < primary.length; index++) {
                 Class<?> primaryClass = primary[index];
@@ -551,9 +551,9 @@ public final class ReflectionUtils {
                 if (primaryClass.equals(secondaryClass) || primaryClass.isAssignableFrom(secondaryClass)) {
                     continue;
                 }
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         /**

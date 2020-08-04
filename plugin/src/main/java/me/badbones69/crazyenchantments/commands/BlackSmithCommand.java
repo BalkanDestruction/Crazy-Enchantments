@@ -16,14 +16,14 @@ public class BlackSmithCommand implements CommandExecutor {
             sender.sendMessage(Messages.PLAYERS_ONLY.getMessage());
             return true;
         }
-        if (hasPermission(sender, "blacksmith")) {
+        if (hasPermission(sender)) {
             BlackSmith.openBlackSmith((Player) sender);
         }
         return true;
     }
 
-    private boolean hasPermission(CommandSender sender, String permission) {
-        return Methods.hasPermission(sender, permission, true);
+    private boolean hasPermission(CommandSender sender) {
+        return Methods.hasPermission(sender, "blacksmith", true);
     }
 
 }

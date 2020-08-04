@@ -43,7 +43,7 @@ public class ShopControl implements Listener {
         ItemStack item = e.getCurrentItem();
         Inventory inventory = e.getInventory();
         Player player = (Player) e.getWhoClicked();
-        if (inventory != null && e.getView().getTitle().equals(shopManager.getInventoryName())) {
+        if (e.getView().getTitle().equals(shopManager.getInventoryName())) {
             e.setCancelled(true);
             if (e.getRawSlot() >= inventory.getSize()) return;
             if (item != null) {

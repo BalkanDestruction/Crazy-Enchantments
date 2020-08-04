@@ -12,15 +12,15 @@ import java.util.List;
 public class WingsManager {
 
     public static final WingsManager instance = new WingsManager();
+    private final List<Player> flyingPlayers = new ArrayList<>();
+    private final List<String> whitelistWorlds = new ArrayList<>();
+    private final List<String> blacklistWorlds = new ArrayList<>();
+    private final List<String> limitlessFlightWorlds = new ArrayList<>();
     private boolean isWingsEnabled;
     private boolean isCloudsEnabled;
     private boolean isEnemeyCheckEnabled;
     private int enemyRadius;
-    private final List<Player> flyingPlayers = new ArrayList<>();
-    private final List<String> whitelistWorlds = new ArrayList<>();
-    private final List<String> blacklistWorlds = new ArrayList<>();
     private List<String> regions;
-    private final List<String> limitlessFlightWorlds = new ArrayList<>();
     private boolean ownersCanFly;
     private boolean membersCanFly;
     private BukkitTask wingsTask;

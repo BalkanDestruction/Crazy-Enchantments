@@ -43,20 +43,27 @@ import java.util.Map.Entry;
 public class CrazyEnchantments {
 
     private static final CrazyEnchantments instance = new CrazyEnchantments();
+    private final boolean useNewSounds = Version.isNewer(Version.v1_8_R3);
+    private final boolean useHealthAttributes = Version.isNewer(Version.v1_8_R3);
+    private final boolean useNewMaterial = Version.isNewer(Version.v1_12_R1);
+    private final Random random = new Random();
+    private final List<Category> categories = new ArrayList<>();
+    private final List<GKitz> gkitz = new ArrayList<>();
+    private final List<CEPlayer> players = new ArrayList<>();
+    private final List<Material> blockList = new ArrayList<>();
+    private final List<CEnchantment> registeredEnchantments = new ArrayList<>();
+    private final List<Event> ignoredEvents = new ArrayList<>();
+    private final List<UUID> ignoredUUIDs = new ArrayList<>();
     private Plugin plugin;
     private int rageMaxLevel;
     private boolean gkitzToggle;
     private boolean useUnsafeEnchantments;
-    private final boolean useNewSounds = Version.isNewer(Version.v1_8_R3);
-    private final boolean useHealthAttributes = Version.isNewer(Version.v1_8_R3);
-    private final boolean useNewMaterial = Version.isNewer(Version.v1_12_R1);
     private boolean breakRageOnDamage;
     private boolean enchantStackedItems;
     private boolean maxEnchantmentCheck;
     private boolean checkVanillaLimit;
     private ItemBuilder enchantmentBook;
     private NMSSupport nmsSupport;
-    private final Random random = new Random();
     private String whiteScrollProtectionName;
     private BlackSmithManager blackSmithManager;
     private InfoMenuManager infoMenuManager;
@@ -67,13 +74,6 @@ public class CrazyEnchantments {
     private AllyManager allyManager;
     private WorldGuardVersion worldGuardVersion;
     private PlotSquaredVersion plotSquaredVersion;
-    private final List<Category> categories = new ArrayList<>();
-    private final List<GKitz> gkitz = new ArrayList<>();
-    private final List<CEPlayer> players = new ArrayList<>();
-    private final List<Material> blockList = new ArrayList<>();
-    private final List<CEnchantment> registeredEnchantments = new ArrayList<>();
-    private final List<Event> ignoredEvents = new ArrayList<>();
-    private final List<UUID> ignoredUUIDs = new ArrayList<>();
 
     public static CrazyEnchantments getInstance() {
         return instance;
@@ -109,7 +109,7 @@ public class CrazyEnchantments {
             }
         }
         whiteScrollProtectionName = Methods.color(config.getString("Settings.WhiteScroll.ProtectedName"));
-        enchantmentBook = new ItemBuilder().setMaterial(config.getString("Settings.Enchantment-Book-Item"));
+        enchantmentBook = new ItemBuilder().setMaterial(Objects.requireNonNull(config.getString("Settings.Enchantment-Book-Item")));
         useUnsafeEnchantments = config.getBoolean("Settings.EnchantmentOptions.UnSafe-Enchantments");
         maxEnchantmentCheck = config.getBoolean("Settings.EnchantmentOptions.MaxAmountOfEnchantmentsToggle");
         checkVanillaLimit = config.getBoolean("Settings.EnchantmentOptions.IncludeVanillaEnchantments");
@@ -117,20 +117,20 @@ public class CrazyEnchantments {
         rageMaxLevel = config.contains("Settings.EnchantmentOptions.MaxRageLevel") ? config.getInt("Settings.EnchantmentOptions.MaxRageLevel") : 4;
         breakRageOnDamage = !config.contains("Settings.EnchantmentOptions.Break-Rage-On-Damage") || config.getBoolean("Settings.EnchantmentOptions.Break-Rage-On-Damage");
         enchantStackedItems = config.contains("Settings.EnchantmentOptions.Enchant-Stacked-Items") && config.getBoolean("Settings.EnchantmentOptions.Enchant-Stacked-Items");
-        for (String category : config.getConfigurationSection("Categories").getKeys(false)) {
+        for (String category : Objects.requireNonNull(config.getConfigurationSection("Categories")).getKeys(false)) {
             String path = "Categories." + category;
             LostBook lostBook = new LostBook(
                     config.getInt(path + ".LostBook.Slot"),
                     config.getBoolean(path + ".LostBook.InGUI"),
                     new ItemBuilder()
-                            .setMaterial(config.getString(path + ".LostBook.Item"))
+                            .setMaterial(Objects.requireNonNull(config.getString(path + ".LostBook.Item")))
                             .setName(config.getString(path + ".LostBook.Name"))
                             .setLore(config.getStringList(path + ".LostBook.Lore"))
                             .setGlowing(config.getBoolean(path + ".LostBook.Glowing")),
                     config.getInt(path + ".LostBook.Cost"),
                     Currency.getCurrency(config.getString(path + ".LostBook.Currency")),
                     config.getBoolean(path + ".LostBook.FireworkToggle"),
-                    getColors(config.getString(path + ".LostBook.FireworkColors")),
+                    getColors(Objects.requireNonNull(config.getString(path + ".LostBook.FireworkColors"))),
                     config.getBoolean(path + ".LostBook.Sound-Toggle"),
                     config.getString(path + ".LostBook.Sound"));
             categories.add(new Category(
@@ -138,7 +138,7 @@ public class CrazyEnchantments {
                     config.getInt(path + ".Slot"),
                     config.getBoolean(path + ".InGUI"),
                     new ItemBuilder()
-                            .setMaterial(config.getString(path + ".Item"))
+                            .setMaterial(Objects.requireNonNull(config.getString(path + ".Item")))
                             .setName(config.getString(path + ".Name"))
                             .setLore(config.getStringList(path + ".Lore"))
                             .setGlowing(config.getBoolean(path + ".Glowing")),
@@ -162,7 +162,7 @@ public class CrazyEnchantments {
                         .setCustomName(enchants.getString(path + ".Name"))
                         .setActivated(enchants.getBoolean(path + ".Enabled"))
                         .setColor(enchants.getString(path + ".Color"))
-                        .setBookColor(enchants.getString(path + ".BookColor"))
+                        .setBookColor(Objects.requireNonNull(enchants.getString(path + ".BookColor")))
                         .setMaxLevel(enchants.getInt(path + ".MaxPower"))
                         .setEnchantmentType(cEnchantment.getType())
                         .setInfoName(enchants.getString(path + ".Info.Name"))
@@ -189,13 +189,13 @@ public class CrazyEnchantments {
             }
         }
         if (gkitzToggle) {
-            for (String kit : gkit.getConfigurationSection("GKitz").getKeys(false)) {
+            for (String kit : Objects.requireNonNull(gkit.getConfigurationSection("GKitz")).getKeys(false)) {
                 String path = "GKitz." + kit + ".";
                 int slot = gkit.getInt(path + "Display.Slot");
                 String time = gkit.getString(path + "Cooldown");
                 boolean autoEquip = gkit.getBoolean(path + "Auto-Equip");
                 NBTItem displayItem = new NBTItem(new ItemBuilder()
-                        .setMaterial(gkit.getString(path + "Display.Item"))
+                        .setMaterial(Objects.requireNonNull(gkit.getString(path + "Display.Item")))
                         .setName(gkit.getString(path + "Display.Name"))
                         .setLore(gkit.getStringList(path + "Display.Lore"))
                         .setGlowing(gkit.getBoolean(path + "Display.Glowing")).build());
@@ -570,7 +570,7 @@ public class CrazyEnchantments {
      */
     public boolean hasEnchantments(ItemStack item) {
         if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 for (CEnchantment enchantment : registeredEnchantments) {
                     try {
                         String[] split = lore.split(" ");
@@ -593,7 +593,7 @@ public class CrazyEnchantments {
     public boolean hasEnchantment(ItemStack item, CEnchantment enchantment) {
         try {
             if (enchantment.isActivated() && item.hasItemMeta() && item.getItemMeta().hasLore()) {
-                for (String lore : item.getItemMeta().getLore()) {
+                for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                     String[] split = lore.split(" ");
                     if (lore.replace(" " + split[split.length - 1], "").equals(enchantment.getColor() + enchantment.getCustomName())) {
                         return true;
@@ -689,7 +689,7 @@ public class CrazyEnchantments {
      * @return True if a piece of armor has the enchantment and false if not.
      */
     public boolean playerHasEnchantmentOn(Player player, ItemStack includeItem, ItemStack excludeItem, CEnchantment enchantment) {
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
             if (!armor.isSimilar(excludeItem) && hasEnchantment(armor, enchantment)) {
                 return true;
             }
@@ -704,7 +704,7 @@ public class CrazyEnchantments {
      * @return True if a piece of armor has the enchantment and false if not.
      */
     public boolean playerHasEnchantmentOnExclude(Player player, ItemStack excludedItem, CEnchantment enchantment) {
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
             if (!armor.isSimilar(excludedItem) && hasEnchantment(armor, enchantment)) {
                 return true;
             }
@@ -719,7 +719,7 @@ public class CrazyEnchantments {
      * @return True if a piece of armor has the enchantment and false if not.
      */
     public boolean playerHasEnchantmentOnInclude(Player player, ItemStack includedItem, CEnchantment enchantment) {
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
             if (hasEnchantment(armor, enchantment)) {
                 return true;
             }
@@ -736,7 +736,7 @@ public class CrazyEnchantments {
      */
     public int getHighestEnchantmentLevel(Player player, ItemStack includedItem, ItemStack excludedItem, CEnchantment enchantment) {
         int highest = 0;
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
             if (!armor.isSimilar(excludedItem) && hasEnchantment(armor, enchantment)) {
                 int level = getLevel(armor, enchantment);
                 if (highest < level) {
@@ -761,7 +761,7 @@ public class CrazyEnchantments {
      */
     public int getHighestEnchantmentLevelExclude(Player player, ItemStack excludedItem, CEnchantment enchantment) {
         int highest = 0;
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
             if (!armor.isSimilar(excludedItem) && hasEnchantment(armor, enchantment)) {
                 int level = getLevel(armor, enchantment);
                 if (highest < level) {
@@ -780,7 +780,7 @@ public class CrazyEnchantments {
      */
     public int getHighestEnchantmentLevelInclude(Player player, ItemStack includedItem, CEnchantment enchantment) {
         int highest = 0;
-        for (ItemStack armor : player.getEquipment().getArmorContents()) {
+        for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
             if (hasEnchantment(armor, enchantment)) {
                 int level = getLevel(armor, enchantment);
                 if (highest < level) {
@@ -869,7 +869,7 @@ public class CrazyEnchantments {
             }
             ItemMeta meta = item.getItemMeta();
             if (meta != null && meta.hasLore()) {
-                lores.addAll(item.getItemMeta().getLore());
+                lores.addAll(Objects.requireNonNull(item.getItemMeta().getLore()));
             }
             enchantmentStrings.put(enchantment.getName(), Methods.color(enchantment.getColor() + enchantment.getCustomName() + " " + convertLevelString(level)));
             for (Entry<String, String> stringEntry : enchantmentStrings.entrySet()) {
@@ -893,7 +893,7 @@ public class CrazyEnchantments {
         List<String> newLore = new ArrayList<>();
         ItemMeta meta = item.getItemMeta();
         if (meta.hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 if (!lore.contains(enchant.getCustomName())) {
                     newLore.add(lore);
                 }
@@ -951,7 +951,7 @@ public class CrazyEnchantments {
 
     public boolean hasWhiteScrollProtection(ItemStack item) {
         if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 if (lore.equals(whiteScrollProtectionName)) {
                     return true;
                 }
@@ -966,7 +966,7 @@ public class CrazyEnchantments {
 
     public ItemStack removeWhiteScrollProtection(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
-        List<String> newLore = new ArrayList<>(itemMeta.getLore());
+        List<String> newLore = new ArrayList<>(Objects.requireNonNull(itemMeta.getLore()));
         newLore.remove(whiteScrollProtectionName);
         itemMeta.setLore(newLore);
         item.setItemMeta(itemMeta);
@@ -981,7 +981,7 @@ public class CrazyEnchantments {
     public void updatePlayerEffects(Player player) {
         if (player != null) {
             for (CEnchantments ench : getEnchantmentPotions().keySet()) {
-                for (ItemStack armor : player.getEquipment().getArmorContents()) {
+                for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
                     if (ench.isActivated() && hasEnchantment(armor, ench.getEnchantment())) {
                         Map<PotionEffectType, Integer> effects = getUpdatedEffects(player, armor, new ItemStack(Material.AIR), ench);
                         for (Entry<PotionEffectType, Integer> type : effects.entrySet()) {
@@ -1007,7 +1007,7 @@ public class CrazyEnchantments {
      */
     public Map<PotionEffectType, Integer> getUpdatedEffects(Player player, ItemStack includedItem, ItemStack excludedItem, CEnchantments enchantment) {
         HashMap<PotionEffectType, Integer> effects = new HashMap<>();
-        List<ItemStack> items = new ArrayList<>(Arrays.asList(player.getEquipment().getArmorContents()));
+        List<ItemStack> items = new ArrayList<>(Arrays.asList(Objects.requireNonNull(player.getEquipment()).getArmorContents()));
         if (includedItem == null) {
             includedItem = new ItemStack(Material.AIR);
         }
@@ -1203,7 +1203,7 @@ public class CrazyEnchantments {
     public int getLevel(ItemStack item, CEnchantment enchant) {
         String line = "";
         if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 if (lore.contains(enchant.getCustomName())) {
                     line = lore;
                     break;
@@ -1226,7 +1226,7 @@ public class CrazyEnchantments {
         int level;
         String line = "";
         if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 if (lore.contains(enchant.getCustomName())) {
                     line = lore;
                     break;

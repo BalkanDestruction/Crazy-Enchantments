@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class BlackSmith implements Listener {
 
@@ -49,7 +50,7 @@ public class BlackSmith implements Listener {
     public void onInvClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
         Inventory inventory = e.getInventory();
-        if (inventory != null && e.getView().getTitle().equals(blackSmithManager.getMenuName())) {
+        if (e.getView().getTitle().equals(blackSmithManager.getMenuName())) {
             e.setCancelled(true);
             ItemStack item = e.getCurrentItem();
             if (item != null) {
@@ -61,7 +62,7 @@ public class BlackSmith implements Listener {
                             inventory.setItem(mainSlot, item);//Moves clicked item to main slot
                             playSound(player, click);
                             if (inventory.getItem(subSlot) != null) {//Sub item slot is not empty
-                                BlackSmithResult resultItem = new BlackSmithResult(player, inventory.getItem(mainSlot), inventory.getItem(subSlot));
+                                BlackSmithResult resultItem = new BlackSmithResult(player, Objects.requireNonNull(inventory.getItem(mainSlot)), inventory.getItem(subSlot));
                                 setResultBoarder(resultItem, inventory);
                             }
                         } else {//Main item slot is not empty
@@ -71,7 +72,7 @@ public class BlackSmith implements Listener {
                             }
                             inventory.setItem(subSlot, item);//Moves clicked item to sub slot
                             playSound(player, click);
-                            BlackSmithResult resultItem = new BlackSmithResult(player, inventory.getItem(mainSlot), inventory.getItem(subSlot));
+                            BlackSmithResult resultItem = new BlackSmithResult(player, Objects.requireNonNull(inventory.getItem(mainSlot)), inventory.getItem(subSlot));
                             setResultBoarder(resultItem, inventory);
                         }
                     }
@@ -85,7 +86,7 @@ public class BlackSmith implements Listener {
                     }
                     if (e.getRawSlot() == resultSlot) {//Clicks the result item slot
                         if (inventory.getItem(mainSlot) != null && inventory.getItem(subSlot) != null) {//Main and Sub items are not empty
-                            BlackSmithResult resultItem = new BlackSmithResult(player, inventory.getItem(mainSlot), inventory.getItem(subSlot));
+                            BlackSmithResult resultItem = new BlackSmithResult(player, Objects.requireNonNull(inventory.getItem(mainSlot)), inventory.getItem(subSlot));
                             if (resultItem.getCost() > 0) {//Items are upgradeable
                                 if (blackSmithManager.getCurrency() != null && player.getGameMode() != GameMode.CREATIVE) {
                                     Currency currency = blackSmithManager.getCurrency();
@@ -136,10 +137,10 @@ public class BlackSmith implements Listener {
             @Override
             public void run() {
                 Inventory inventory = e.getInventory();
-                if (inventory != null && e.getView().getTitle().equals(blackSmithManager.getMenuName())) {
+                if (e.getView().getTitle().equals(blackSmithManager.getMenuName())) {
                     Player player = (Player) e.getPlayer();
                     for (int slot : Arrays.asList(mainSlot, subSlot)) {
-                        if (inventory.getItem(slot) != null && inventory.getItem(slot).getType() != Material.AIR) {
+                        if (inventory.getItem(slot) != null && Objects.requireNonNull(inventory.getItem(slot)).getType() != Material.AIR) {
                             givePlayerItem(player, inventory.getItem(slot));
                         }
                     }

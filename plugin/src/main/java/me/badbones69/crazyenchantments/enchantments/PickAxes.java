@@ -270,10 +270,8 @@ public class PickAxes implements Listener {
                     }
                     if (CEnchantments.EXPERIENCE.isActivated() && enchantments.contains(CEnchantments.EXPERIENCE.getEnchantment()) && CEnchantments.EXPERIENCE.chanceSuccessful(item)) {
                         int power = ce.getLevel(item, CEnchantments.EXPERIENCE);
-                        if (isOre) {
-                            ExperienceOrb orb = block.getWorld().spawn(block.getLocation(), ExperienceOrb.class);
-                            orb.setExperience(Methods.percentPick(7, 3) * power);
-                        }
+                        ExperienceOrb orb = block.getWorld().spawn(block.getLocation(), ExperienceOrb.class);
+                        orb.setExperience(Methods.percentPick(7, 3) * power);
                     }
                     if (Version.isNewer(Version.v1_11_R1)) {
                         e.setDropItems(false);
@@ -300,10 +298,8 @@ public class PickAxes implements Listener {
                     }
                     if (CEnchantments.EXPERIENCE.isActivated() && enchantments.contains(CEnchantments.EXPERIENCE.getEnchantment()) && CEnchantments.EXPERIENCE.chanceSuccessful(item)) {
                         int power = ce.getLevel(item, CEnchantments.EXPERIENCE);
-                        if (isOre) {
-                            ExperienceOrb orb = block.getWorld().spawn(block.getLocation(), ExperienceOrb.class);
-                            orb.setExperience(Methods.percentPick(7, 3) * power);
-                        }
+                        ExperienceOrb orb = block.getWorld().spawn(block.getLocation(), ExperienceOrb.class);
+                        orb.setExperience(Methods.percentPick(7, 3) * power);
                     }
                 }
                 if (Version.isNewer(Version.v1_11_R1)) {
@@ -435,7 +431,7 @@ public class PickAxes implements Listener {
     }
 
     private int getRandomNumber(int range) {
-        return range > 1 ? random.nextInt(range > 0 ? (range) : 1) : 1;
+        return range > 1 ? random.nextInt(range) : 1;
     }
 
 }

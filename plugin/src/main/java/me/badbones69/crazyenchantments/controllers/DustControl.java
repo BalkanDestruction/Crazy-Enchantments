@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class DustControl implements Listener {
@@ -71,7 +72,7 @@ public class DustControl implements Listener {
             List<String> lore = item.getItemMeta().getLore();
             List<String> fileLore = Files.CONFIG.getFile().getStringList("Settings.Dust." + dust.getConfigName() + ".Lore");
             int i = 0;
-            if (lore != null && fileLore != null && lore.size() == fileLore.size()) {
+            if (lore != null && lore.size() == fileLore.size()) {
                 for (String l : fileLore) {
                     l = Methods.color(l);
                     String lo = lore.get(i);
@@ -100,7 +101,7 @@ public class DustControl implements Listener {
             List<String> lore = item.getItemMeta().getLore();
             List<String> fileLore = Files.CONFIG.getFile().getStringList("Settings.Dust." + dust.getConfigName() + ".Lore");
             int i = 0;
-            if (lore != null && fileLore != null && lore.size() == fileLore.size()) {
+            if (lore != null && lore.size() == fileLore.size()) {
                 for (String l : fileLore) {
                     l = Methods.color(l);
                     String lo = lore.get(i);
@@ -131,7 +132,7 @@ public class DustControl implements Listener {
     public void onInvClick(InventoryClickEvent e) {
         Inventory inv = e.getInventory();
         Player player = (Player) e.getWhoClicked();
-        if (inv != null && e.getCurrentItem() != null && e.getCursor() != null) {
+        if (e.getCurrentItem() != null && e.getCursor() != null) {
             ItemStack book = e.getCurrentItem();
             ItemStack dust = e.getCursor();
             if (book.getAmount() == 1 && book.hasItemMeta() && dust.hasItemMeta() && book.getItemMeta().hasLore() && dust.getItemMeta().hasLore() && book.getItemMeta().hasDisplayName() &&
@@ -147,7 +148,7 @@ public class DustControl implements Listener {
                     return;
                 }
                 if (dust.getItemMeta().getDisplayName().equals(Methods.color(Files.CONFIG.getFile().getString("Settings.Dust.SuccessDust.Name"))) &&
-                        dust.getType() == new ItemBuilder().setMaterial(Files.CONFIG.getFile().getString("Settings.Dust.SuccessDust.Item")).getMaterial()) {
+                        dust.getType() == new ItemBuilder().setMaterial(Objects.requireNonNull(Files.CONFIG.getFile().getString("Settings.Dust.SuccessDust.Item"))).getMaterial()) {
                     int per = getPercent(Dust.SUCCESS_DUST, dust);
                     if (Methods.hasArgument("%success_rate%", Files.CONFIG.getFile().getStringList("Settings.EnchantmentBookLore"))) {
                         int total = Methods.getPercent("%success_rate%", book, Files.CONFIG.getFile().getStringList("Settings.EnchantmentBookLore"), 100);
@@ -167,7 +168,7 @@ public class DustControl implements Listener {
                     return;
                 }
                 if (dust.getItemMeta().getDisplayName().equals(Methods.color(Files.CONFIG.getFile().getString("Settings.Dust.DestroyDust.Name"))) &&
-                        dust.getType() == new ItemBuilder().setMaterial(Files.CONFIG.getFile().getString("Settings.Dust.DestroyDust.Item")).getMaterial()) {
+                        dust.getType() == new ItemBuilder().setMaterial(Objects.requireNonNull(Files.CONFIG.getFile().getString("Settings.Dust.DestroyDust.Item"))).getMaterial()) {
                     int per = getPercent(Dust.DESTROY_DUST, dust);
                     if (Methods.hasArgument("%destroy_rate%", Files.CONFIG.getFile().getStringList("Settings.EnchantmentBookLore"))) {
                         int total = Methods.getPercent("%destroy_rate%", book, Files.CONFIG.getFile().getStringList("Settings.EnchantmentBookLore"), 0);
@@ -213,6 +214,7 @@ public class DustControl implements Listener {
                     if (config.getBoolean("Settings.Dust.MysteryDust.Firework.Toggle")) {
                         List<Color> colors = new ArrayList<>();
                         String colorString = config.getString("Settings.Dust.MysteryDust.Firework.Colors", "Black, Gray, Lime");
+                        assert colorString != null;
                         if (colorString.contains(", ")) {
                             for (String color : colorString.split(", ")) {
                                 Color c = Methods.getColor(color);

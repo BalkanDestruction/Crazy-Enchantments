@@ -2,16 +2,16 @@ package me.badbones69.crazyenchantments.api.objects;
 
 import me.badbones69.crazyenchantments.api.enums.CEnchantments;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ArmorEnchantment {
 
     private final CEnchantments enchantment;
-    private List<PotionEffects> potionEffects;
-    private double damageAmplifier;
     private final boolean isLevelAddedToAmplifier;
     private final boolean isPotionEnchantment;
+    private List<PotionEffects> potionEffects;
+    private double damageAmplifier;
 
     /**
      * Create an armor enchantment that does damage amplifying.
@@ -35,7 +35,7 @@ public class ArmorEnchantment {
      * @param isLevelAddedToAmplifier If the level of the enchantment on the item is added to the potion amplifier.
      */
     public ArmorEnchantment(CEnchantments enchantment, PotionEffects potionEffect, boolean isLevelAddedToAmplifier) {
-        this(enchantment, Arrays.asList(potionEffect), isLevelAddedToAmplifier);
+        this(enchantment, Collections.singletonList(potionEffect), isLevelAddedToAmplifier);
     }
 
     /**

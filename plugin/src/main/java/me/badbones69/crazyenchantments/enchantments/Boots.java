@@ -24,6 +24,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Boots implements Listener {
 
@@ -69,7 +70,7 @@ public class Boots implements Listener {
     @EventHandler
     public void onFly(PlayerToggleFlightEvent e) {
         Player player = e.getPlayer();
-        if (manager.isWingsEnabled() && ce.hasEnchantment(player.getEquipment().getBoots(), CEnchantments.WINGS) && regionCheck(player) && !areEnemiesNearby(player)) {
+        if (manager.isWingsEnabled() && ce.hasEnchantment(Objects.requireNonNull(player.getEquipment()).getBoots(), CEnchantments.WINGS) && regionCheck(player) && areEnemiesNearby(player)) {
             if (SupportedPlugins.SPARTAN.isPluginLoaded()) {
                 SpartanSupport.cancelFly(player);
             }
@@ -90,9 +91,9 @@ public class Boots implements Listener {
         if ((e.getFrom().getBlockX() != e.getTo().getBlockX()) || (e.getFrom().getBlockY() != e.getTo().getBlockY()) || (e.getFrom().getBlockZ() != e.getTo().getBlockZ())) {
             Player player = e.getPlayer();
             boolean isFlying = player.isFlying();
-            if (manager.isWingsEnabled() && ce.hasEnchantment(player.getEquipment().getBoots(), CEnchantments.WINGS)) {
+            if (manager.isWingsEnabled() && ce.hasEnchantment(Objects.requireNonNull(player.getEquipment()).getBoots(), CEnchantments.WINGS)) {
                 if (regionCheck(player)) {
-                    if (!areEnemiesNearby(player)) {
+                    if (areEnemiesNearby(player)) {
                         player.setAllowFlight(true);
                     } else {
                         if (isFlying && gamemodeCheck(player)) {
@@ -118,7 +119,7 @@ public class Boots implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        if (manager.isWingsEnabled() && ce.hasEnchantment(player.getEquipment().getBoots(), CEnchantments.WINGS) && regionCheck(player) && !areEnemiesNearby(player)) {
+        if (manager.isWingsEnabled() && ce.hasEnchantment(Objects.requireNonNull(player.getEquipment()).getBoots(), CEnchantments.WINGS) && regionCheck(player) && areEnemiesNearby(player)) {
             if (SupportedPlugins.SPARTAN.isPluginLoaded()) {
                 SpartanSupport.cancelFly(player);
             }
@@ -149,11 +150,11 @@ public class Boots implements Listener {
         if (manager.isEnemeyCheckEnabled() && !manager.inLimitlessFlightWorld(player)) {
             for (Player otherPlayer : getNearByPlayers(player, manager.getEnemyRadius())) {
                 if (!(player.hasPermission("crazyenchantments.bypass.wings") && support.isFriendly(player, otherPlayer))) {
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
     private List<Player> getNearByPlayers(Player player, int radius) {

@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Tinkerer implements Listener {
 
@@ -58,7 +59,7 @@ public class Tinkerer implements Listener {
         Player player = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK && Methods.getItemInHand(player) != null) {
             ItemStack item = Methods.getItemInHand(player);
-            if (item.getType() == new ItemBuilder().setMaterial(Files.TINKER.getFile().getString("Settings.BottleOptions.Item")).getMaterial() &&
+            if (item.getType() == new ItemBuilder().setMaterial(Objects.requireNonNull(Files.TINKER.getFile().getString("Settings.BottleOptions.Item"))).getMaterial() &&
                     item.hasItemMeta() && item.getItemMeta().hasLore() && item.getItemMeta().hasDisplayName() &&
                     item.getItemMeta().getDisplayName().equals(Methods.color(Files.TINKER.getFile().getString("Settings.BottleOptions.Name")))) {
                 e.setCancelled(true);
@@ -75,7 +76,7 @@ public class Tinkerer implements Listener {
     public void onInvClick(InventoryClickEvent e) {
         Inventory inv = e.getInventory();
         Player player = (Player) e.getWhoClicked();
-        if (inv != null && e.getView().getTitle().equals(Methods.color(Files.TINKER.getFile().getString("Settings.GUIName")))) {
+        if (e.getView().getTitle().equals(Methods.color(Files.TINKER.getFile().getString("Settings.GUIName")))) {
             e.setCancelled(true);
             ItemStack current = e.getCurrentItem();
             if (current != null && current.getType() != Material.AIR && current.hasItemMeta() && (current.getItemMeta().hasLore() || current.getItemMeta().hasDisplayName() || current.getItemMeta().hasEnchants())) {
@@ -90,9 +91,9 @@ public class Tinkerer implements Listener {
                                 total = total + getTotalXP(item);
                             } else {
                                 if (Methods.isInventoryFull(player)) {
-                                    player.getWorld().dropItem(player.getLocation(), inv.getItem(getSlot().get(slot)));
+                                    player.getWorld().dropItem(player.getLocation(), Objects.requireNonNull(inv.getItem(getSlot().get(slot))));
                                 } else {
-                                    player.getInventory().addItem(inv.getItem(getSlot().get(slot)));
+                                    player.getInventory().addItem(Objects.requireNonNull(inv.getItem(getSlot().get(slot))));
                                 }
                             }
                             toggle = true;
@@ -169,17 +170,17 @@ public class Tinkerer implements Listener {
     public void onInvClose(final InventoryCloseEvent e) {
         final Inventory inv = e.getInventory();
         final Player player = (Player) e.getPlayer();
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getPluginManager().getPlugin("CrazyEnchantments"), () -> {
-            if (inv != null && e.getView().getTitle().equals(Methods.color(Files.TINKER.getFile().getString("Settings.GUIName")))) {
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("CrazyEnchantments")), () -> {
+            if (e.getView().getTitle().equals(Methods.color(Files.TINKER.getFile().getString("Settings.GUIName")))) {
                 for (int slot : getSlot().keySet()) {
-                    if (inv.getItem(slot) != null && inv.getItem(slot).getType() != Material.AIR) {
+                    if (inv.getItem(slot) != null && Objects.requireNonNull(inv.getItem(slot)).getType() != Material.AIR) {
                         if (player.isDead()) {
-                            player.getWorld().dropItem(player.getLocation(), inv.getItem(slot));
+                            player.getWorld().dropItem(player.getLocation(), Objects.requireNonNull(inv.getItem(slot)));
                         } else {
                             if (Methods.isInventoryFull(player)) {
-                                player.getWorld().dropItem(player.getLocation(), inv.getItem(slot));
+                                player.getWorld().dropItem(player.getLocation(), Objects.requireNonNull(inv.getItem(slot)));
                             } else {
-                                player.getInventory().addItem(inv.getItem(slot));
+                                player.getInventory().addItem(Objects.requireNonNull(inv.getItem(slot)));
                             }
                         }
                     }
@@ -196,6 +197,7 @@ public class Tinkerer implements Listener {
         for (String l : Files.TINKER.getFile().getStringList("Settings.BottleOptions.Lore")) {
             lore.add(l.replace("%Total%", getTotalXP(item) + "").replace("%total%", getTotalXP(item) + ""));
         }
+        assert id != null;
         ItemStack it = new ItemBuilder().setMaterial(id).setName(name).setLore(lore).build();
         if (SupportedPlugins.MEGA_SKILLS.isPluginLoaded()) {
             it = new ItemBuilder().setMaterial("EXPERIENCE_BOTTLE", "EXP_BOTTLE").setName("&6Enhanced Exp - &a&l" + getTotalXP(item) + " EXP").build();
@@ -256,7 +258,7 @@ public class Tinkerer implements Listener {
         int i = 0;
         for (String l : Files.TINKER.getFile().getStringList("Settings.BottleOptions.Lore")) {
             l = Methods.color(l);
-            String lo = item.getItemMeta().getLore().get(i);
+            String lo = Objects.requireNonNull(item.getItemMeta().getLore()).get(i);
             if (l.contains("%Total%")) {
                 String[] b = l.split("%Total%");
                 if (b.length >= 1) arg = lo.replace(b[0], "");

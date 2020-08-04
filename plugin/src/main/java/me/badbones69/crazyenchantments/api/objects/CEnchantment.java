@@ -9,12 +9,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class CEnchantment {
 
     private static final CrazyEnchantments ce = CrazyEnchantments.getInstance();
-
+    private final List<Category> categories;
+    private final CEnchantment instance;
     private String name;
     private String customName;
     private boolean activated;
@@ -25,9 +27,7 @@ public class CEnchantment {
     private int chance;
     private int chanceIncrease;
     private List<String> infoDescription;
-    private final List<Category> categories;
     private EnchantmentType enchantmentType;
-    private final CEnchantment instance;
 
     public CEnchantment(String name) {
         this.instance = this;
@@ -225,7 +225,7 @@ public class CEnchantment {
     public int getLevel(ItemStack item) {
         int level = 0;
         if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 if (lore.contains(customName)) {
                     level = ce.convertLevelInteger(lore.replace(color + customName + " ", ""));
                     break;

@@ -24,6 +24,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+
 public class Main extends JavaPlugin implements Listener {
 
     private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
@@ -42,18 +44,18 @@ public class Main extends JavaPlugin implements Listener {
             ce.loadCEPlayer(player);
             if (fixHealth) {
                 if (ce.useHealthAttributes()) {
-                    player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                    Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
                 } else {
                     player.setMaxHealth(20);
                 }
             }
         }
-        getCommand("crazyenchantments").setExecutor(new CECommand());
-        getCommand("crazyenchantments").setTabCompleter(new CETab());
-        getCommand("tinkerer").setExecutor(new TinkerCommand());
-        getCommand("blacksmith").setExecutor(new BlackSmithCommand());
-        getCommand("gkit").setExecutor(new GkitzCommand());
-        getCommand("gkit").setTabCompleter(new GkitzTab());
+        Objects.requireNonNull(getCommand("crazyenchantments")).setExecutor(new CECommand());
+        Objects.requireNonNull(getCommand("crazyenchantments")).setTabCompleter(new CETab());
+        Objects.requireNonNull(getCommand("tinkerer")).setExecutor(new TinkerCommand());
+        Objects.requireNonNull(getCommand("blacksmith")).setExecutor(new BlackSmithCommand());
+        Objects.requireNonNull(getCommand("gkit")).setExecutor(new GkitzCommand());
+        Objects.requireNonNull(getCommand("gkit")).setTabCompleter(new GkitzTab());
         PluginManager pm = Bukkit.getServer().getPluginManager();
         //==========================================================================\\
         pm.registerEvents(this, this);
@@ -127,7 +129,7 @@ public class Main extends JavaPlugin implements Listener {
         ce.updatePlayerEffects(player);
         if (fixHealth) {
             if (ce.useHealthAttributes()) {
-                player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
+                Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue());
             } else {
                 player.setMaxHealth(20);
             }

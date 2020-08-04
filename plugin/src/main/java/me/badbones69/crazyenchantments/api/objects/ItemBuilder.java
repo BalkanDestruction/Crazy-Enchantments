@@ -36,10 +36,10 @@ public class ItemBuilder implements Cloneable {
 
     private static final CrazyEnchantments ce = CrazyEnchantments.getInstance();
     private static final boolean useNewMaterial = ce.useNewMaterial();
+    private final List<String> lore;
     private Material material;
     private int damage;
     private String name;
-    private final List<String> lore;
     private int amount;
     private String player;
     private boolean isHash;
@@ -170,7 +170,8 @@ public class ItemBuilder implements Cloneable {
                         break;
                     default:
                         Enchantment enchantment = getEnchantment(option);
-                        if (enchantment != null && enchantment.getName() != null) {
+                        if (enchantment != null) {
+                            enchantment.getName();
                             try {
                                 itemBuilder.addEnchantments(enchantment, Integer.parseInt(value));
                             } catch (NumberFormatException e) {
@@ -988,9 +989,7 @@ public class ItemBuilder implements Cloneable {
         for (String flagString : flagStrings) {
             try {
                 ItemFlag itemFlag = ItemFlag.valueOf(flagString.toUpperCase());
-                if (itemFlag != null) {
-                    addItemFlag(itemFlag);
-                }
+                addItemFlag(itemFlag);
             } catch (Exception ignored) {
             }
         }

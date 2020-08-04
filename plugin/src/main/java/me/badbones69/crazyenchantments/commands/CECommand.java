@@ -58,7 +58,7 @@ public class CECommand implements CommandExecutor {
                     return true;
                 case "reload":// /ce reload
                     if (hasPermission(sender, "reload")) {
-                        ce.getCEPlayers().forEach(cePlayer -> ce.backupCEPlayer(cePlayer));
+                        ce.getCEPlayers().forEach(ce::backupCEPlayer);
                         fileManager.setup(ce.getPlugin());
                         ce.load();
                         sender.sendMessage(Messages.CONFIG_RELOAD.getMessage());
@@ -68,6 +68,7 @@ public class CECommand implements CommandExecutor {
                     if (hasPermission(sender, "limit")) {
                         HashMap<String, String> placeholders = new HashMap<>();
                         placeholders.put("%bypass%", sender.hasPermission("crazyenchantments.bypass.limit") + "");
+                        assert sender instanceof Player;
                         placeholders.put("%limit%", ce.getPlayerMaxEnchantments((Player) sender) + "");
                         placeholders.put("%vanilla%", ce.checkVanillaLimit() + "");
                         placeholders.put("%item%", ce.getEnchantmentAmount(Methods.getItemInHand((Player) sender)) + "");
@@ -153,6 +154,7 @@ public class CECommand implements CommandExecutor {
                         } else {
                             EnchantmentType enchantmentType = ce.getInfoMenuManager().getFromName(args[1]);
                             if (enchantmentType != null) {
+                                assert sender instanceof Player;
                                 ce.getInfoMenuManager().openInfoMenu((Player) sender, enchantmentType);
                                 return true;
                             }
@@ -248,7 +250,7 @@ public class CECommand implements CommandExecutor {
                                 amount = Integer.parseInt(args[2]);
                             }
                             if (args.length >= 4) {
-                                if (!Methods.isPlayerOnline(args[3], sender)) {
+                                if (Methods.isPlayerOnline(args[3], sender)) {
                                     return true;
                                 }
                                 player = Methods.getPlayer(args[3]);
@@ -289,7 +291,7 @@ public class CECommand implements CommandExecutor {
                             amount = Integer.parseInt(args[1]);
                         }
                         if (args.length >= 3) {
-                            if (!Methods.isPlayerOnline(args[2], sender)) {
+                            if (Methods.isPlayerOnline(args[2], sender)) {
                                 return true;
                             }
                             player = Methods.getPlayer(args[2]);
@@ -326,7 +328,7 @@ public class CECommand implements CommandExecutor {
                             amount = Integer.parseInt(args[1]);
                         }
                         if (args.length >= 3) {
-                            if (!Methods.isPlayerOnline(args[2], sender)) {
+                            if (Methods.isPlayerOnline(args[2], sender)) {
                                 return true;
                             }
                             player = Methods.getPlayer(args[2]);
@@ -364,7 +366,7 @@ public class CECommand implements CommandExecutor {
                                 amount = Integer.parseInt(args[2]);
                             }
                             if (args.length >= 4) {
-                                if (!Methods.isPlayerOnline(args[3], sender)) {
+                                if (Methods.isPlayerOnline(args[3], sender)) {
                                     return true;
                                 }
                                 player = Methods.getPlayer(args[3]);
@@ -429,7 +431,7 @@ public class CECommand implements CommandExecutor {
                             }
                             if (args.length >= 4) {
                                 name = args[3];
-                                if (!Methods.isPlayerOnline(name, sender)) {
+                                if (Methods.isPlayerOnline(name, sender)) {
                                     return true;
                                 }
                             } else {
@@ -558,11 +560,12 @@ public class CECommand implements CommandExecutor {
                                 amount = Integer.parseInt(args[3]);
                             }
                             if (args.length >= 5) {
-                                if (!Methods.isPlayerOnline(args[4], sender)) {
+                                if (Methods.isPlayerOnline(args[4], sender)) {
                                     return true;
                                 }
                                 player = Methods.getPlayer(args[4]);
                             } else {
+                                assert sender instanceof Player;
                                 player = (Player) sender;
                             }
                             if (enchantment == null) {

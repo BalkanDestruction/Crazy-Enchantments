@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 
 public class AllyEnchantments implements Listener {
@@ -35,8 +36,8 @@ public class AllyEnchantments implements Listener {
             if (e.getEntity() instanceof Player && e.getDamager() instanceof LivingEntity) {// Player gets attacked
                 Player player = (Player) e.getEntity();
                 LivingEntity enemy = (LivingEntity) e.getDamager();
-                if (!inCooldown(player)) {
-                    for (ItemStack item : player.getEquipment().getArmorContents()) {
+                if (inCooldown(player)) {
+                    for (ItemStack item : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
                         // Spawn allies when getting attacked
                         if (ce.hasEnchantments(item)) {
                             if (ce.hasEnchantment(item, CEnchantments.TAMER)) {
@@ -72,8 +73,8 @@ public class AllyEnchantments implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-                if (!inCooldown(player)) {
-                    for (ItemStack item : player.getEquipment().getArmorContents()) {
+                if (inCooldown(player)) {
+                    for (ItemStack item : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
                         // Spawn allies when attacking
                         if (ce.hasEnchantments(item)) {
                             if (ce.hasEnchantment(item, CEnchantments.TAMER)) {
@@ -155,12 +156,12 @@ public class AllyEnchantments implements Listener {
         if (allyCooldown.containsKey(player.getUniqueId())) {
             //Right now is before the player's cooldown ends.
             if (Calendar.getInstance().before(allyCooldown.get(player.getUniqueId()))) {
-                return true;
+                return false;
             }
             //Remove the player because their cooldown is over.
             allyCooldown.remove(player.getUniqueId());
         }
-        return false;
+        return true;
     }
 
 }

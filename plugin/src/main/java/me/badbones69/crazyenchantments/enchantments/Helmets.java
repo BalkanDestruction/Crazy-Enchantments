@@ -16,6 +16,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Helmets implements Listener {
 
@@ -26,7 +27,7 @@ public class Helmets implements Listener {
     public void onMovment(PlayerMoveEvent e) {
         Player player = e.getPlayer();
         if (CEnchantments.COMMANDER.isActivated()) {
-            for (ItemStack armor : player.getEquipment().getArmorContents()) {
+            for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
                 if (ce.hasEnchantment(armor, CEnchantments.COMMANDER)) {
                     int radius = 4 + ce.getLevel(armor, CEnchantments.COMMANDER);
                     ArrayList<Player> players = new ArrayList<>();

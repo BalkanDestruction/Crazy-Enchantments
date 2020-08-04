@@ -38,7 +38,8 @@ public class EnchantmentControl implements Listener {
 
     @EventHandler
     public void addEnchantment(InventoryClickEvent e) {
-        if (e.getInventory() != null && e.getCursor() != null && e.getCurrentItem() != null) {
+        e.getInventory();
+        if (e.getCursor() != null && e.getCurrentItem() != null) {
             ItemStack item = e.getCurrentItem();
             if (ce.isEnchantmentBook(e.getCursor())) {
                 CEBook ceBook = ce.getCEBook(e.getCursor());
@@ -197,7 +198,8 @@ public class EnchantmentControl implements Listener {
     @EventHandler
     public void onMilkDrink(PlayerItemConsumeEvent e) {
         Player player = e.getPlayer();
-        if (e.getItem() != null && e.getItem().getType() == Material.MILK_BUCKET) {
+        e.getItem();
+        if (e.getItem().getType() == Material.MILK_BUCKET) {
             new BukkitRunnable() {
                 @Override
                 public void run() {

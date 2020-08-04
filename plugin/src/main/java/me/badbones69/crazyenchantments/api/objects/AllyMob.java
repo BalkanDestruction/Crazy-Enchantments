@@ -11,18 +11,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class AllyMob {
 
     private static final AllyManager allyManager = AllyManager.getInstance();
     private final AllyType type;
     private final Player owner;
-    private LivingEntity ally;
-    private long spawnTime;
-    private BukkitTask runnable;
     private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
     private final Support support = Support.getInstance();
     private final AllyMob instance;
+    private LivingEntity ally;
+    private long spawnTime;
+    private BukkitTask runnable;
 
     public AllyMob(Player owner, AllyType type) {
         this.type = type;
@@ -51,7 +52,7 @@ public class AllyMob {
         ally = (LivingEntity) location.getWorld().spawnEntity(location, type.entityType);
         support.noStack(ally);
         if (ce.useHealthAttributes()) {
-            ally.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(type.maxHealth);
+            Objects.requireNonNull(ally.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(type.maxHealth);
         } else {
             ally.setMaxHealth(type.maxHealth);
         }

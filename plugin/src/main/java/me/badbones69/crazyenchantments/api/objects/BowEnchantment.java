@@ -7,10 +7,10 @@ import java.util.List;
 public class BowEnchantment {
 
     private final CEnchantments enchantment;
-    private List<PotionEffects> potionEffects;
-    private double damageAmplifier;
     private final boolean isLevelAddedToAmplifier;
     private final boolean isPotionEnchantment;
+    private List<PotionEffects> potionEffects;
+    private double damageAmplifier;
 
     /**
      * Create a bow enchantment that does damage amplifying.

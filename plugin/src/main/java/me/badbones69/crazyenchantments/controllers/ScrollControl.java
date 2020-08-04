@@ -52,7 +52,7 @@ public class ScrollControl implements Listener {
             categories.put(enchantment, ce.getHighestEnchantmentCategory(enchantment).getRarity());
             newEnchantmentOrder.add(enchantment);
         }
-        newEnchantmentOrder = orderInts(newEnchantmentOrder, categories);
+        orderInts(newEnchantmentOrder, categories);
         ItemMeta itemMeta = item.getItemMeta();
         ArrayList<String> lore = new ArrayList<>();
         for (CEnchantment enchantment : newEnchantmentOrder) {
@@ -100,7 +100,7 @@ public class ScrollControl implements Listener {
         Inventory inventory = e.getInventory();
         ItemStack item = e.getCurrentItem() != null ? e.getCurrentItem() : new ItemStack(Material.AIR);
         ItemStack scroll = e.getCursor() != null ? e.getCursor() : new ItemStack(Material.AIR);
-        if (inventory != null && inventory.getType() == InventoryType.CRAFTING && item.getType() != Material.AIR && scroll.getType() != Material.AIR) {
+        if (inventory.getType() == InventoryType.CRAFTING && item.getType() != Material.AIR && scroll.getType() != Material.AIR) {
             if (e.getRawSlot() < 9) {
                 return;
             }

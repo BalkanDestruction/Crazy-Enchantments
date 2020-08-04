@@ -116,7 +116,7 @@ public class Axes implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
-        if (support.allowsPVP(player.getLocation()) && e.getEntity().getKiller() instanceof Player) {
+        if (support.allowsPVP(player.getLocation()) && e.getEntity().getKiller() != null) {
             Player damager = e.getEntity().getKiller();
             ItemStack item = Methods.getItemInHand(damager);
             if (ce.hasEnchantment(item, CEnchantments.DECAPITATION) && CEnchantments.DECAPITATION.chanceSuccessful(item)) {

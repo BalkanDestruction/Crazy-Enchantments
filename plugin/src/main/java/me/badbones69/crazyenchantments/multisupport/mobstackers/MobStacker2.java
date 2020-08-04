@@ -10,6 +10,7 @@ public class MobStacker2 {
     private static final Plugin ms2 = Bukkit.getPluginManager().getPlugin("MobStacker2");
 
     public static void noStack(Entity en) {
+        assert ms2 != null;
         en.setMetadata("ms-is-stacking", new FixedMetadataValue(ms2, false));
     }
 

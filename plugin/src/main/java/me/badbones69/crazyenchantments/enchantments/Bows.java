@@ -37,6 +37,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Bows implements Listener {
 
@@ -57,6 +58,7 @@ public class Bows implements Listener {
             List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(bow);
             enchantedArrows.add(new EnchantedArrow(arrow, e.getEntity(), bow, enchantments));
             if (CEnchantments.MULTIARROW.isActivated() && ce.hasEnchantment(bow, CEnchantments.MULTIARROW)) {
+                assert bow != null;
                 int power = ce.getLevel(bow, CEnchantments.MULTIARROW);
                 if (CEnchantments.MULTIARROW.chanceSuccessful(bow)) {
                     if (e.getEntity() instanceof Player) {
@@ -186,7 +188,7 @@ public class Bows implements Listener {
                     if (SupportedPlugins.AAC.isPluginLoaded()) {
                         AACSupport.exemptPlayer(shooter);
                     }
-                    for (LivingEntity entity : Methods.getNearbyLivingEntities(location, 2D, arrow.getArrow())) {
+                    for (LivingEntity entity : Methods.getNearbyLivingEntities(2D, arrow.getArrow())) {
                         EntityDamageByEntityEvent damageByEntityEvent = new EntityDamageByEntityEvent(shooter, entity, DamageCause.CUSTOM, 5D);
                         ce.addIgnoredEvent(damageByEntityEvent);
                         ce.addIgnoredUUID(shooter.getUniqueId());
@@ -226,7 +228,7 @@ public class Bows implements Listener {
                 if (CEnchantments.DOCTOR.isActivated() && arrow.hasEnchantment(CEnchantments.DOCTOR) && support.isFriendly(arrow.getShooter(), e.getEntity())) {
                     int heal = 1 + arrow.getLevel(CEnchantments.DOCTOR);
                     //Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
-                    double maxHealth = ce.useHealthAttributes() ? entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : entity.getMaxHealth();
+                    double maxHealth = ce.useHealthAttributes() ? Objects.requireNonNull(entity.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() : entity.getMaxHealth();
                     if (entity.getHealth() < maxHealth) {
                         if (entity instanceof Player) {
                             EnchantmentUseEvent event = new EnchantmentUseEvent((Player) e.getEntity(), CEnchantments.DOCTOR, bow);

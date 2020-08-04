@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public enum Scrolls {
 
@@ -34,7 +35,7 @@ public enum Scrolls {
             itemBuilderScrolls.put(scroll, new ItemBuilder()
                     .setName(config.getString(path + "Name"))
                     .setLore(config.getStringList(path + "Item-Lore"))
-                    .setMaterial(config.getString(path + "Item"))
+                    .setMaterial(Objects.requireNonNull(config.getString(path + "Item")))
                     .setGlowing(config.getBoolean(path + "Glowing")));
         }
     }

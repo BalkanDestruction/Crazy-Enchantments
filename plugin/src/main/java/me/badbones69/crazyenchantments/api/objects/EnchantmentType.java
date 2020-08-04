@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EnchantmentType {
 
@@ -23,7 +24,7 @@ public class EnchantmentType {
         this.name = name;
         this.slot = file.getInt(path + ".Display-Item.Slot", 1) - 1;
         this.displayItem = new ItemBuilder()
-                .setMaterial(file.getString(path + ".Display-Item.Item"))
+                .setMaterial(Objects.requireNonNull(file.getString(path + ".Display-Item.Item")))
                 .setName(file.getString(path + ".Display-Item.Name"))
                 .setLore(file.getStringList(path + ".Display-Item.Lore")).build();
         for (String type : file.getStringList(path + ".Enchantable-Items")) {

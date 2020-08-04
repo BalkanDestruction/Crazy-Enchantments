@@ -35,6 +35,7 @@ public class AACSupport implements Listener {
 
     public static void exemptPlayerTime(Player player) {
         exemptPlayer(player);
+        assert plugin != null;
         new BukkitRunnable() {
             @Override
             public void run() {

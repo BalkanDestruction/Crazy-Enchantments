@@ -13,8 +13,8 @@ public class EnchantmentUseEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
     private final CEnchantment enchantment;
-    private boolean cancel;
     private final ItemStack item;
+    private boolean cancel;
 
     public EnchantmentUseEvent(Player player, CEnchantment enchantment, ItemStack item) {
         this.player = player;

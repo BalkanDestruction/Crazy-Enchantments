@@ -21,11 +21,11 @@ public class ShopManager {
 
     private static final ShopManager instance = new ShopManager();
     private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private final HashMap<ItemBuilder, Integer> customizerItems = new HashMap<>();
+    private final HashMap<ItemBuilder, Integer> shopItems = new HashMap<>();
     private String inventoryName;
     private int inventorySize;
     private boolean enchantmentTableShop;
-    private final HashMap<ItemBuilder, Integer> customizerItems = new HashMap<>();
-    private final HashMap<ItemBuilder, Integer> shopItems = new HashMap<>();
 
     public static ShopManager getInstance() {
         return instance;

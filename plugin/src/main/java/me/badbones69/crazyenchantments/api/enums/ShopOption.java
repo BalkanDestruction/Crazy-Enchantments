@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public enum ShopOption {
 
@@ -29,8 +30,8 @@ public enum ShopOption {
     private final String path;
     private final String namePath;
     private final String lorePath;
-    private Option option;
     private final boolean buyable;
+    private Option option;
 
     ShopOption(String optionPath, String path, String namePath, String lorePath, boolean buyable) {
         this.optionPath = optionPath;
@@ -50,7 +51,7 @@ public enum ShopOption {
                 shopOptions.put(shopOption, new Option(new ItemBuilder()
                         .setName(config.getString(itemPath + shopOption.getNamePath()))
                         .setLore(config.getStringList(itemPath + shopOption.getLorePath()))
-                        .setMaterial(config.getString(itemPath + "Item"))
+                        .setMaterial(Objects.requireNonNull(config.getString(itemPath + "Item")))
                         .setGlowing(config.getBoolean(itemPath + "Glowing")),
                         config.getInt(itemPath + "Slot", 1) - 1,
                         config.getBoolean(itemPath + "InGUI"),

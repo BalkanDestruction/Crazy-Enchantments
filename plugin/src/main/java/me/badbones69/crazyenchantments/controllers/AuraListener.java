@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class AuraListener implements Listener {
 
@@ -32,8 +33,8 @@ public class AuraListener implements Listener {
         if (!e.isCancelled()) {
             if ((e.getFrom().getBlockX() != e.getTo().getBlockX()) || (e.getFrom().getBlockY() != e.getTo().getBlockY()) || (e.getFrom().getBlockZ() != e.getTo().getBlockZ())) {
                 Player player = e.getPlayer();
-                List<Player> players = getNearByPlayers(player, 3);
-                for (ItemStack item : player.getEquipment().getArmorContents()) {//The player that moves.
+                List<Player> players = getNearByPlayers(player);
+                for (ItemStack item : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {//The player that moves.
                     List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(item);
                     if (!enchantments.isEmpty()) {
                         for (CEnchantments enchantment : auraEnchantments) {
@@ -46,7 +47,7 @@ public class AuraListener implements Listener {
                     }
                 }
                 for (Player other : players) {
-                    for (ItemStack item : other.getEquipment().getArmorContents()) {// The other players moving.
+                    for (ItemStack item : Objects.requireNonNull(other.getEquipment()).getArmorContents()) {// The other players moving.
                         List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(item);
                         if (!enchantments.isEmpty()) {
                             for (CEnchantments enchantment : auraEnchantments) {
@@ -61,9 +62,9 @@ public class AuraListener implements Listener {
         }
     }
 
-    private List<Player> getNearByPlayers(Player player, int radius) {
+    private List<Player> getNearByPlayers(Player player) {
         List<Player> players = new ArrayList<>();
-        for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
+        for (Entity entity : player.getNearbyEntities(3, 3, 3)) {
             if (entity instanceof Player) {
                 if (entity != player) {
                     players.add((Player) entity);

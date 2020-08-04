@@ -16,7 +16,8 @@ public class InfoGUIControl implements Listener {
 
     @EventHandler
     public void infoClick(InventoryClickEvent e) {
-        if (e.getInventory() != null && e.getView().getTitle().equals(manager.getInventoryName())) {
+        e.getInventory();
+        if (e.getView().getTitle().equals(manager.getInventoryName())) {
             e.setCancelled(true);
             if (e.getCurrentItem() != null) {
                 ItemStack item = e.getCurrentItem();

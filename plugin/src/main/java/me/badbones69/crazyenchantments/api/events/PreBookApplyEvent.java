@@ -14,7 +14,6 @@ public class PreBookApplyEvent extends Event implements Cancellable {
     private final Player player;
     private final int level;
     private final boolean destroyed;
-    private boolean cancelled;
     private final boolean successful;
     private final int successChance;
     private final int destroyChance;
@@ -22,6 +21,7 @@ public class PreBookApplyEvent extends Event implements Cancellable {
     private final ItemStack enchantedItem;
     private final CEnchantment enchantment;
     private final CEBook ceBook;
+    private boolean cancelled;
 
     public PreBookApplyEvent(Player player, ItemStack enchantedItem, CEBook ceBook, boolean creativeSuccess, boolean successful, boolean destroyed) {
         this.level = ceBook.getLevel();

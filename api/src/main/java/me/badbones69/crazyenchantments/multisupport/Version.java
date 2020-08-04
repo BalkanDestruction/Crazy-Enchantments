@@ -122,9 +122,8 @@ public enum Version {
             result = 1;
         } else if (current == check) {// check is the same as current
             result = 0;
-        } else if (check == -1) {// check is older then current
-            result = -1;
-        }
+        }  // check is older then current
+
         return result;
     }
 

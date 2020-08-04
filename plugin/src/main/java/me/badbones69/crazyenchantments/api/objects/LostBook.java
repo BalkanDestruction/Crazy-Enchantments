@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class LostBook {
 
@@ -84,7 +85,7 @@ public class LostBook {
         HashMap<String, String> placeholders = new HashMap<>();
         placeholders.put("%Category%", category.getDisplayItem().getName());
         return new ItemBuilder()
-                .setMaterial(file.getString("Settings.LostBook.Item"))
+                .setMaterial(Objects.requireNonNull(file.getString("Settings.LostBook.Item")))
                 .setAmount(amount)
                 .setName(file.getString("Settings.LostBook.Name"))
                 .setNamePlaceholders(placeholders)

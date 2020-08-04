@@ -25,12 +25,12 @@ public class Hoes implements Listener {
 
     private static List<Material> harvesterCrops;
     private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private List<Material> seedlings;
     private final Random random = new Random();
     private final Material soilBlock = ce.getMaterial("FARMLAND", "SOIL");
     private final Material grassBlock = ce.getMaterial("GRASS_BLOCK", "GRASS");
-    private HashMap<Material, Material> planterSeeds;
     private final HashMap<UUID, HashMap<Block, BlockFace>> blocks = new HashMap<>();
+    private List<Material> seedlings;
+    private HashMap<Material, Material> planterSeeds;
 
     /**
      * Only has crop blocks
@@ -70,13 +70,16 @@ public class Hoes implements Listener {
             Block block = e.getClickedBlock();
             List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(hoe);
             //Crop is not fully grown
-            if (CEnchantments.GREENTHUMB.isActivated() && enchantments.contains(CEnchantments.GREENTHUMB.getEnchantment()) &&
-                    getSeedlings().contains(block.getType()) && !ce.getNMSSupport().isFullyGrown(block)) {
-                fullyGrowPlant(hoe, block, player);
-                if (player.getGameMode() != GameMode.CREATIVE) {//Take durability from players not in Creative
-                    Methods.removeDurability(hoe, player);
+            if (CEnchantments.GREENTHUMB.isActivated() && enchantments.contains(CEnchantments.GREENTHUMB.getEnchantment())) {
+                assert block != null;
+                if (getSeedlings().contains(block.getType()) && !ce.getNMSSupport().isFullyGrown(block)) {
+                    fullyGrowPlant(hoe, block, player);
+                    if (player.getGameMode() != GameMode.CREATIVE) {//Take durability from players not in Creative
+                        Methods.removeDurability(hoe, player);
+                    }
                 }
             }
+            assert block != null;
             if (block.getType() == grassBlock || block.getType() == Material.DIRT || block.getType() == Material.SOUL_SAND || block.getType() == soilBlock) {
                 boolean hasGreenThumb = CEnchantments.GREENTHUMB.isActivated() && enchantments.contains(CEnchantments.GREENTHUMB.getEnchantment());
                 if (enchantments.contains(CEnchantments.TILLER.getEnchantment())) {
@@ -190,14 +193,14 @@ public class Hoes implements Listener {
         Block plant = soil.getLocation().add(0, 1, 0).getBlock();
         if (plant.getType() == Material.AIR) {
             if (Version.isNewer(Version.v1_8_R3)) {
-                seedType = getPlanterSeed(player.getEquipment().getItemInOffHand());
+                seedType = getPlanterSeed(Objects.requireNonNull(player.getEquipment()).getItemInOffHand());
                 playerSeedItem = player.getEquipment().getItemInOffHand();
                 if (isSoulSand) {//If on soul sand we want it to plant Nether Warts not normal seeds.
-                    if (playerSeedItem != null && playerSeedItem.getType() != ce.getMaterial("NETHER_WART", "NETHER_STALK")) {
+                    if (playerSeedItem.getType() != ce.getMaterial("NETHER_WART", "NETHER_STALK")) {
                         seedType = null;
                     }
                 } else {
-                    if (playerSeedItem != null && playerSeedItem.getType() == ce.getMaterial("NETHER_WART", "NETHER_STALK")) {
+                    if (playerSeedItem.getType() == ce.getMaterial("NETHER_WART", "NETHER_STALK")) {
                         seedType = null;//Makes sure nether warts are not put on soil.
                     }
                 }
@@ -298,7 +301,7 @@ public class Hoes implements Listener {
 
     private List<Block> getAreaCrops(Player player, Block block, BlockFace blockFace) {
         List<Block> blockList = new ArrayList<>();
-        for (Block crop : getAreaBlocks(block, blockFace, 0, 1)) {//Radius of 1 is 3x3
+        for (Block crop : getAreaBlocks(block, blockFace, 1)) {//Radius of 1 is 3x3
             if (getHarvesterCrops().contains(crop.getType()) && ce.getNMSSupport().isFullyGrown(crop)) {
                 BlockBreakEvent event = new BlockBreakEvent(crop, player);
                 ce.addIgnoredEvent(event);
@@ -329,39 +332,39 @@ public class Hoes implements Listener {
     }
 
     private List<Block> getAreaBlocks(Block block) {
-        return getAreaBlocks(block, BlockFace.UP, 0, 1);//Radius of 1 is 3x3
+        return getAreaBlocks(block, BlockFace.UP, 1);//Radius of 1 is 3x3
     }
 
     private List<Block> getAreaBlocks(Block block, int radius) {
-        return getAreaBlocks(block, BlockFace.UP, 0, radius);
+        return getAreaBlocks(block, BlockFace.UP, radius);
     }
 
-    private List<Block> getAreaBlocks(Block block, BlockFace blockFace, int depth, int radius) {
+    private List<Block> getAreaBlocks(Block block, BlockFace blockFace, int radius) {
         Location loc = block.getLocation();
         Location loc2 = block.getLocation();
         switch (blockFace) {
             case SOUTH:
-                loc.add(-radius, radius, -depth);
+                loc.add(-radius, radius, -0);
                 loc2.add(radius, -radius, 0);
                 break;
             case WEST:
-                loc.add(depth, radius, -radius);
+                loc.add(0, radius, -radius);
                 loc2.add(0, -radius, radius);
                 break;
             case EAST:
-                loc.add(-depth, radius, radius);
+                loc.add(-0, radius, radius);
                 loc2.add(0, -radius, -radius);
                 break;
             case NORTH:
-                loc.add(radius, radius, depth);
+                loc.add(radius, radius, 0);
                 loc2.add(-radius, -radius, 0);
                 break;
             case UP:
-                loc.add(-radius, -depth, -radius);
+                loc.add(-radius, -0, -radius);
                 loc2.add(radius, 0, radius);
                 break;
             case DOWN:
-                loc.add(radius, depth, radius);
+                loc.add(radius, 0, radius);
                 loc2.add(-radius, 0, -radius);
                 break;
             default:

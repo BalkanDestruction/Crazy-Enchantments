@@ -22,15 +22,15 @@ import java.util.Map.Entry;
 public class FileManager {
 
     private static final FileManager instance = new FileManager();
-    private Plugin plugin;
-    private String prefix = "";
-    private boolean log = false;
     private final Map<Files, File> files = new HashMap<>();
     private final List<String> homeFolders = new ArrayList<>();
     private final List<CustomFile> customFiles = new ArrayList<>();
     private final Map<String, String> jarHomeFolders = new HashMap<>();
     private final Map<String, String> autoGenerateFiles = new HashMap<>();
     private final Map<Files, FileConfiguration> configurations = new HashMap<>();
+    private Plugin plugin;
+    private String prefix = "";
+    private boolean log = false;
 
     public static FileManager getInstance() {
         return instance;

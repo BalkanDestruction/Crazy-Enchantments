@@ -18,10 +18,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ProtectionCrystal implements Listener {
 
@@ -33,7 +30,7 @@ public class ProtectionCrystal implements Listener {
     public static void loadProtectionCrystal() {
         FileConfiguration config = Files.CONFIG.getFile();
         crystal = new ItemBuilder()
-                .setMaterial(config.getString("Settings.ProtectionCrystal.Item"))
+                .setMaterial(Objects.requireNonNull(config.getString("Settings.ProtectionCrystal.Item")))
                 .setName(config.getString("Settings.ProtectionCrystal.Name"))
                 .setLore(config.getStringList("Settings.ProtectionCrystal.Lore"))
                 .setGlowing(config.getBoolean("Settings.ProtectionCrystal.Glowing"));
@@ -50,7 +47,7 @@ public class ProtectionCrystal implements Listener {
 
     public static boolean isProtected(ItemStack item) {
         if (item.hasItemMeta() && item.getItemMeta().hasLore()) {
-            for (String lore : item.getItemMeta().getLore()) {
+            for (String lore : Objects.requireNonNull(item.getItemMeta().getLore())) {
                 if (lore.contains(protectionString)) {
                     return true;
                 }
@@ -80,7 +77,7 @@ public class ProtectionCrystal implements Listener {
 
     public static ItemStack removeProtection(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
-        ArrayList<String> lore = new ArrayList<>(itemMeta.getLore());
+        ArrayList<String> lore = new ArrayList<>(Objects.requireNonNull(itemMeta.getLore()));
         lore.remove(protectionString);
         itemMeta.setLore(lore);
         item.setItemMeta(itemMeta);
@@ -90,26 +87,25 @@ public class ProtectionCrystal implements Listener {
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
-        if (e.getInventory() != null) {
-            ItemStack crystalItem = e.getCursor() != null ? e.getCursor() : new ItemStack(Material.AIR);// The Crystal.
-            ItemStack item = e.getCurrentItem() != null ? e.getCurrentItem() : new ItemStack(Material.AIR);// The item your adding the protection to.
-            if (item.getType() != Material.AIR && crystalItem.getType() != Material.AIR &&
-                    //The item getting protected is not stacked.
-                    item.getAmount() == 1 &&
-                    //Making sure they are not dropping crystals on top of other crystals.
-                    !getCrystals().isSimilar(item) && crystalItem.isSimilar(getCrystals()) &&
-                    //The item does not have protection on it.
-                    !isProtected(item)) {
-                //The crystal is not stacked.
-                if (crystalItem.getAmount() > 1) {
-                    player.sendMessage(Messages.NEED_TO_UNSTACK_ITEM.getMessage());
-                    return;
-                }
-                e.setCancelled(true);
-                player.setItemOnCursor(Methods.removeItem(crystalItem));
-                e.setCurrentItem(Methods.addLore(item, protectionString));
-                player.updateInventory();
+        e.getInventory();
+        ItemStack crystalItem = e.getCursor() != null ? e.getCursor() : new ItemStack(Material.AIR);// The Crystal.
+        ItemStack item = e.getCurrentItem() != null ? e.getCurrentItem() : new ItemStack(Material.AIR);// The item your adding the protection to.
+        if (item.getType() != Material.AIR && crystalItem.getType() != Material.AIR &&
+                //The item getting protected is not stacked.
+                item.getAmount() == 1 &&
+                //Making sure they are not dropping crystals on top of other crystals.
+                !getCrystals().isSimilar(item) && crystalItem.isSimilar(getCrystals()) &&
+                //The item does not have protection on it.
+                !isProtected(item)) {
+            //The crystal is not stacked.
+            if (crystalItem.getAmount() > 1) {
+                player.sendMessage(Messages.NEED_TO_UNSTACK_ITEM.getMessage());
+                return;
             }
+            e.setCancelled(true);
+            player.setItemOnCursor(Methods.removeItem(crystalItem));
+            e.setCurrentItem(Methods.addLore(item, protectionString));
+            player.updateInventory();
         }
 
     }

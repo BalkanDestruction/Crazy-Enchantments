@@ -14,18 +14,19 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 public class CEPlayer {
 
-    private int souls;
     private final Player player;
-    private boolean soulsActive;
     private final List<Cooldown> cooldowns;
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private int souls;
+    private boolean soulsActive;
     private Double rageMultiplier;
     private boolean hasRage;
     private int rageLevel;
     private BukkitTask rageTask;
-    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
 
     /**
      * Used to make a new CEPlayer.
@@ -135,7 +136,7 @@ public class CEPlayer {
         for (ItemStack item : kit.getKitItems()) {
             if (kit.canAutoEquipt()) {
                 if (item.getType().toString().toLowerCase().contains("helmet")) {
-                    if (player.getEquipment().getHelmet() == null || player.getEquipment().getHelmet().getType() == Material.AIR) {
+                    if (Objects.requireNonNull(player.getEquipment()).getHelmet() == null || Objects.requireNonNull(player.getEquipment().getHelmet()).getType() == Material.AIR) {
                         ArmorEquipEvent event = new ArmorEquipEvent(player, EquipMethod.DRAG, ArmorType.HELMET, new ItemStack(Material.AIR), item);
                         Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
@@ -144,7 +145,7 @@ public class CEPlayer {
                         continue;
                     }
                 } else if (item.getType().toString().toLowerCase().contains("chestplate")) {
-                    if (player.getEquipment().getChestplate() == null || player.getEquipment().getChestplate().getType() == Material.AIR) {
+                    if (Objects.requireNonNull(player.getEquipment()).getChestplate() == null || Objects.requireNonNull(player.getEquipment().getChestplate()).getType() == Material.AIR) {
                         ArmorEquipEvent event = new ArmorEquipEvent(player, EquipMethod.DRAG, ArmorType.CHESTPLATE, new ItemStack(Material.AIR), item);
                         Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
@@ -153,7 +154,7 @@ public class CEPlayer {
                         continue;
                     }
                 } else if (item.getType().toString().toLowerCase().contains("leggings")) {
-                    if (player.getEquipment().getLeggings() == null || player.getEquipment().getLeggings().getType() == Material.AIR) {
+                    if (Objects.requireNonNull(player.getEquipment()).getLeggings() == null || Objects.requireNonNull(player.getEquipment().getLeggings()).getType() == Material.AIR) {
                         ArmorEquipEvent event = new ArmorEquipEvent(player, EquipMethod.DRAG, ArmorType.LEGGINGS, new ItemStack(Material.AIR), item);
                         Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
@@ -161,7 +162,7 @@ public class CEPlayer {
                         }
                         continue;
                     }
-                } else if (item.getType().toString().toLowerCase().contains("boots") && (player.getEquipment().getBoots() == null || player.getEquipment().getBoots().getType() == Material.AIR)) {
+                } else if (item.getType().toString().toLowerCase().contains("boots") && (Objects.requireNonNull(player.getEquipment()).getBoots() == null || Objects.requireNonNull(player.getEquipment().getBoots()).getType() == Material.AIR)) {
                     ArmorEquipEvent event = new ArmorEquipEvent(player, EquipMethod.DRAG, ArmorType.BOOTS, new ItemStack(Material.AIR), item);
                     Bukkit.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {

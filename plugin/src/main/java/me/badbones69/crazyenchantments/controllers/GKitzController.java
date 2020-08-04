@@ -25,6 +25,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class GKitzController implements Listener {
 
@@ -53,7 +54,7 @@ public class GKitzController implements Listener {
             List<String> lore = new ArrayList<>();
             Cooldown cooldown = !cePlayer.canUseGKit(kit) && cePlayer.hasGkitPermission(kit) ? cePlayer.getCooldown(kit) : new Cooldown();
             if (displayItem.hasItemMeta() && displayItem.getItemMeta().hasLore()) {
-                for (String line : displayItem.getItemMeta().getLore()) {
+                for (String line : Objects.requireNonNull(displayItem.getItemMeta().getLore())) {
                     lore.add(cooldown.getCooldownLeft(line));
                 }
             }
@@ -68,7 +69,7 @@ public class GKitzController implements Listener {
     public void onInvClick(InventoryClickEvent e) {
         Inventory inventory = e.getInventory();
         ItemStack item = e.getCurrentItem();
-        if (inventory != null && item != null && item.getType() != Material.AIR) {
+        if (item != null && item.getType() != Material.AIR) {
             Player player = (Player) e.getWhoClicked();
             CEPlayer cePlayer = ce.getCEPlayer(player);
             NBTItem nbtItem = new NBTItem(item);

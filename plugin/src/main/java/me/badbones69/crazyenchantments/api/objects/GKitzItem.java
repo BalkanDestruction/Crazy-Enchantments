@@ -7,9 +7,9 @@ import java.util.HashMap;
 
 public class GKitzItem {
 
-    private ItemBuilder itemBuilder;
     private final HashMap<CEnchantment, Integer> ceEnchantments;
     private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private ItemBuilder itemBuilder;
 
     /**
      * Make an empty gkit item.

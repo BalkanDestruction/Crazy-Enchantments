@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class CommandChecker implements Listener {
 
@@ -25,10 +26,8 @@ public class CommandChecker implements Listener {
         if (clearInventoryCommands.contains(e.getMessage().toLowerCase())) {
             for (CEnchantments enchantment : ce.getEnchantmentPotions().keySet()) {
                 if (enchantment.isActivated()) {
-                    for (ItemStack armor : player.getEquipment().getArmorContents()) {
-                        if (armor != null) {
-                            ce.getUpdatedEffects(player, air, air, enchantment).keySet().forEach(player::removePotionEffect);
-                        }
+                    for (ItemStack armor : Objects.requireNonNull(player.getEquipment()).getArmorContents()) {
+                        ce.getUpdatedEffects(player, air, air, enchantment).keySet().forEach(player::removePotionEffect);
                     }
                 }
             }

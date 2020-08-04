@@ -137,11 +137,11 @@ public class Methods {
     public static boolean isPlayerOnline(String playerName, CommandSender sender) {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             if (player.getName().equalsIgnoreCase(playerName)) {
-                return true;
+                return false;
             }
         }
         sender.sendMessage(Messages.NOT_ONLINE.getMessage());
-        return false;
+        return true;
     }
 
     public static void removeItem(ItemStack item, Player player) {
@@ -161,7 +161,7 @@ public class Methods {
                 }
             }
             if (!found) {
-                ItemStack offHand = player.getEquipment().getItemInOffHand();
+                ItemStack offHand = Objects.requireNonNull(player.getEquipment()).getItemInOffHand();
                 if (offHand.isSimilar(item)) {
                     if ((amount - offHand.getAmount()) >= 0) {
                         player.getEquipment().setItemInOffHand(new ItemStack(Material.AIR, 1));
@@ -170,7 +170,7 @@ public class Methods {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         player.updateInventory();
     }
@@ -238,7 +238,7 @@ public class Methods {
             originalLine = Methods.color(originalLine).toLowerCase();
             if (originalLine.contains(argument.toLowerCase())) {
                 String[] b = originalLine.split(argument.toLowerCase());
-                for (String itemLine : item.getItemMeta().getLore()) {
+                for (String itemLine : Objects.requireNonNull(item.getItemMeta().getLore())) {
                     boolean toggle = false;// Checks to make sure the lore is the same.
                     if (b.length >= 1) {
                         if (itemLine.toLowerCase().startsWith(b[0])) {
@@ -292,7 +292,7 @@ public class Methods {
             return true;
         }
         int chance = 1 + random.nextInt(max);
-        return chance >= 1 && chance <= min;
+        return chance <= min;
     }
 
     public static Integer percentPick(int max, int min) {
@@ -307,7 +307,7 @@ public class Methods {
         return player.getInventory().firstEmpty() == -1;
     }
 
-    public static List<LivingEntity> getNearbyLivingEntities(Location loc, double radius, Entity entity) {
+    public static List<LivingEntity> getNearbyLivingEntities(double radius, Entity entity) {
         List<Entity> out = entity.getNearbyEntities(radius, radius, radius);
         List<LivingEntity> entities = new ArrayList<>();
         for (Entity en : out) {
@@ -318,7 +318,7 @@ public class Methods {
         return entities;
     }
 
-    public static List<Entity> getNearbyEntitiess(Location loc, double radius, Entity entity) {
+    public static List<Entity> getNearbyEntitiess(double radius, Entity entity) {
         return entity.getNearbyEntities(radius, radius, radius);
     }
 
@@ -482,8 +482,8 @@ public class Methods {
                     if (one.getItemMeta().getDisplayName().equalsIgnoreCase(two.getItemMeta().getDisplayName())) {
                         if (one.getItemMeta().hasLore() && two.getItemMeta().hasLore()) {
                             int i = 0;
-                            for (String lore : one.getItemMeta().getLore()) {
-                                if (!lore.equals(two.getItemMeta().getLore().get(i))) {
+                            for (String lore : Objects.requireNonNull(one.getItemMeta().getLore())) {
+                                if (!lore.equals(Objects.requireNonNull(two.getItemMeta().getLore()).get(i))) {
                                     return false;
                                 }
                                 i++;
@@ -508,7 +508,7 @@ public class Methods {
             ParticleEffect.EXPLOSION_HUGE.display(0, 0, 0, 0, 2, player.getLocation().add(0, 1, 0), 100);
         }
         player.getWorld().playSound(player.getLocation(), ce.getSound("ENTITY_GENERIC_EXPLODE", "EXPLODE"), 1, 1);
-        for (Entity e : Methods.getNearbyEntitiess(player.getLocation(), 3D, player)) {
+        for (Entity e : Methods.getNearbyEntitiess(3D, player)) {
             if (support.allowsPVP(e.getLocation())) {
                 if (e.getType() == EntityType.DROPPED_ITEM) {
                     e.remove();
@@ -551,7 +551,7 @@ public class Methods {
             ParticleEffect.EXPLOSION_HUGE.display(0, 0, 0, 0, 2, arrow.getLocation().add(0, 1, 0), 100);
         }
         player.getWorld().playSound(player.getLocation(), ce.getSound("ENTITY_GENERIC_EXPLODE", "EXPLODE"), 1, 1);
-        for (Entity e : Methods.getNearbyEntitiess(arrow.getLocation(), 3D, arrow)) {
+        for (Entity e : Methods.getNearbyEntitiess(3D, arrow)) {
             if (support.allowsPVP(e.getLocation())) {
                 if (e.getType() == EntityType.DROPPED_ITEM) {
                     e.remove();

@@ -13,10 +13,10 @@ public class BookFailEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
     private final int level;
-    private boolean cancelled;
     private final ItemStack enchantedItem;
     private final CEnchantment enchantment;
     private final CEBook ceBook;
+    private boolean cancelled;
 
     public BookFailEvent(Player player, ItemStack enchantedItem, CEBook ceBook) {
         this.level = ceBook.getLevel();

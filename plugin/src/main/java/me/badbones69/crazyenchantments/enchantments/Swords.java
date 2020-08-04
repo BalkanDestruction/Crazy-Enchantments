@@ -39,10 +39,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Swords implements Listener {
 
@@ -84,16 +81,16 @@ public class Swords implements Listener {
                             ItemStack armor = null;
                             switch (equipmentSlot) {
                                 case HEAD:
-                                    armor = player.getEquipment().getHelmet();
+                                    armor = Objects.requireNonNull(player.getEquipment()).getHelmet();
                                     break;
                                 case CHEST:
-                                    armor = player.getEquipment().getChestplate();
+                                    armor = Objects.requireNonNull(player.getEquipment()).getChestplate();
                                     break;
                                 case LEGS:
-                                    armor = player.getEquipment().getLeggings();
+                                    armor = Objects.requireNonNull(player.getEquipment()).getLeggings();
                                     break;
                                 case FEET:
-                                    armor = player.getEquipment().getBoots();
+                                    armor = Objects.requireNonNull(player.getEquipment()).getBoots();
                                     break;
                             }
                             if (armor != null) {
@@ -213,7 +210,7 @@ public class Swords implements Listener {
                         if (!event.isCancelled()) {
                             int steal = ce.getLevel(item, CEnchantments.LIFESTEAL);
                             //Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
-                            double maxHealth = ce.useHealthAttributes() ? damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : damager.getMaxHealth();
+                            double maxHealth = ce.useHealthAttributes() ? Objects.requireNonNull(damager.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() : damager.getMaxHealth();
                             if (damager.getHealth() + steal < maxHealth) {
                                 damager.setHealth(damager.getHealth() + steal);
                             }
@@ -242,7 +239,7 @@ public class Swords implements Listener {
                         Bukkit.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
                             //Uses getValue as if the player has health boost it is modifying the base so the value after the modifier is needed.
-                            double maxHealth = ce.useHealthAttributes() ? damager.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() : damager.getMaxHealth();
+                            double maxHealth = ce.useHealthAttributes() ? Objects.requireNonNull(damager.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue() : damager.getMaxHealth();
                             if (damager.getHealth() + e.getDamage() / 2 < maxHealth) {
                                 damager.setHealth(damager.getHealth() + e.getDamage() / 2);
                             }
@@ -328,7 +325,7 @@ public class Swords implements Listener {
                             if (SupportedPlugins.AAC.isPluginLoaded()) {
                                 AACSupport.exemptPlayer(damager);
                             }
-                            for (LivingEntity entity : Methods.getNearbyLivingEntities(loc, 2D, damager)) {
+                            for (LivingEntity entity : Methods.getNearbyLivingEntities(2D, damager)) {
                                 EntityDamageByEntityEvent damageByEntityEvent = new EntityDamageByEntityEvent(damager, entity, DamageCause.CUSTOM, 5D);
                                 ce.addIgnoredEvent(damageByEntityEvent);
                                 ce.addIgnoredUUID(damager.getUniqueId());
@@ -399,7 +396,7 @@ public class Swords implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent e) {
-        if (e.getEntity().getKiller() instanceof Player) {
+        if (e.getEntity().getKiller() != null) {
             Player damager = e.getEntity().getKiller();
             Player player = e.getEntity();
             ItemStack item = Methods.getItemInHand(damager);
@@ -430,7 +427,7 @@ public class Swords implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDeath(EntityDeathEvent e) {
-        if (e.getEntity().getKiller() instanceof Player) {
+        if (e.getEntity().getKiller() != null) {
             Player damager = e.getEntity().getKiller();
             ItemStack item = Methods.getItemInHand(damager);
             if (ce.hasEnchantments(item)) {

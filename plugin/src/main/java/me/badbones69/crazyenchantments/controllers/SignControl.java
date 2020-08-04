@@ -27,11 +27,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
 
 public class SignControl implements Listener {
 
@@ -45,9 +42,9 @@ public class SignControl implements Listener {
         if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (e.getClickedBlock().getState() instanceof Sign) {
             FileConfiguration config = Files.CONFIG.getFile();
-            for (String l : Files.SIGNS.getFile().getConfigurationSection("Locations").getKeys(false)) {
+            for (String l : Objects.requireNonNull(Files.SIGNS.getFile().getConfigurationSection("Locations")).getKeys(false)) {
                 String type = Files.SIGNS.getFile().getString("Locations." + l + ".Type");
-                World world = Bukkit.getWorld(Files.SIGNS.getFile().getString("Locations." + l + ".World"));
+                World world = Bukkit.getWorld(Objects.requireNonNull(Files.SIGNS.getFile().getString("Locations." + l + ".World")));
                 int x = Files.SIGNS.getFile().getInt("Locations." + l + ".X");
                 int y = Files.SIGNS.getFile().getInt("Locations." + l + ".Y");
                 int z = Files.SIGNS.getFile().getInt("Locations." + l + ".Z");
@@ -150,7 +147,7 @@ public class SignControl implements Listener {
                         if (book != null) {
                             ItemBuilder itemBuilder = book.getItemBuilder();
                             if (config.contains("Settings.SignOptions.CategoryShopStyle.Buy-Message")) {
-                                player.sendMessage(Methods.color(Methods.getPrefix() + config.getString("Settings.SignOptions.CategoryShopStyle.Buy-Message")
+                                player.sendMessage(Methods.color(Methods.getPrefix() + Objects.requireNonNull(config.getString("Settings.SignOptions.CategoryShopStyle.Buy-Message"))
                                         .replace("%BookName%", itemBuilder.getName()).replace("%bookname%", itemBuilder.getName())
                                         .replace("%Category%", category.getName()).replace("%category%", category.getName())));
                             }
@@ -172,8 +169,8 @@ public class SignControl implements Listener {
         if (!e.isCancelled() && !ce.isIgnoredEvent(e)) {
             Player player = e.getPlayer();
             Location location = e.getBlock().getLocation();
-            for (String locationName : Files.SIGNS.getFile().getConfigurationSection("Locations").getKeys(false)) {
-                World world = Bukkit.getWorld(Files.SIGNS.getFile().getString("Locations." + locationName + ".World"));
+            for (String locationName : Objects.requireNonNull(Files.SIGNS.getFile().getConfigurationSection("Locations")).getKeys(false)) {
+                World world = Bukkit.getWorld(Objects.requireNonNull(Files.SIGNS.getFile().getString("Locations." + locationName + ".World")));
                 int x = Files.SIGNS.getFile().getInt("Locations." + locationName + ".X");
                 int y = Files.SIGNS.getFile().getInt("Locations." + locationName + ".Y");
                 int z = Files.SIGNS.getFile().getInt("Locations." + locationName + ".Z");
@@ -203,43 +200,46 @@ public class SignControl implements Listener {
         }
         String line1 = e.getLine(0);
         String line2 = e.getLine(1);
-        if (Methods.hasPermission(player, "sign", false) && line1.equalsIgnoreCase("{CrazyEnchant}")) {
-            for (Category category : ce.getCategories()) {
-                if (line2.equalsIgnoreCase("{" + category.getName() + "}")) {
-                    e.setLine(0, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line1"), category));
-                    e.setLine(1, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line2"), category));
-                    e.setLine(2, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line3"), category));
-                    e.setLine(3, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line4"), category));
-                    signs.set("Locations." + id + ".Type", category.getName());
-                    signs.set("Locations." + id + ".World", loc.getWorld().getName());
-                    signs.set("Locations." + id + ".X", loc.getBlockX());
-                    signs.set("Locations." + id + ".Y", loc.getBlockY());
-                    signs.set("Locations." + id + ".Z", loc.getBlockZ());
-                    Files.SIGNS.saveFile();
-                    return;
+        if (Methods.hasPermission(player, "sign", false)) {
+            assert line1 != null;
+            if (line1.equalsIgnoreCase("{CrazyEnchant}")) {
+                for (Category category : ce.getCategories()) {
+                    if (line2.equalsIgnoreCase("{" + category.getName() + "}")) {
+                        e.setLine(0, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line1"), category));
+                        e.setLine(1, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line2"), category));
+                        e.setLine(2, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line3"), category));
+                        e.setLine(3, placeHolders(Files.CONFIG.getFile().getString("Settings.SignOptions.CategoryShopStyle.Line4"), category));
+                        signs.set("Locations." + id + ".Type", category.getName());
+                        signs.set("Locations." + id + ".World", loc.getWorld().getName());
+                        signs.set("Locations." + id + ".X", loc.getBlockX());
+                        signs.set("Locations." + id + ".Y", loc.getBlockY());
+                        signs.set("Locations." + id + ".Z", loc.getBlockZ());
+                        Files.SIGNS.saveFile();
+                        return;
+                    }
                 }
-            }
-            HashMap<String, String> types = new HashMap<>();
-            types.put("Crystal", "ProtectionCrystal");
-            types.put("Scrambler", "Scrambler");
-            types.put("DestroyDust", "DestroyDust");
-            types.put("SuccessDust", "SuccessDust");
-            types.put("BlackScroll", "BlackScroll");
-            types.put("WhiteScroll", "WhiteScroll");
-            types.put("TransmogScroll", "TransmogScroll");
-            for (Entry<String, String> type : types.entrySet()) {
-                if (line2.equalsIgnoreCase("{" + type.getKey() + "}")) {
-                    e.setLine(0, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line1")));
-                    e.setLine(1, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line2")));
-                    e.setLine(2, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line3")));
-                    e.setLine(3, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line4")));
-                    signs.set("Locations." + id + ".Type", type.getValue());
-                    signs.set("Locations." + id + ".World", loc.getWorld().getName());
-                    signs.set("Locations." + id + ".X", loc.getBlockX());
-                    signs.set("Locations." + id + ".Y", loc.getBlockY());
-                    signs.set("Locations." + id + ".Z", loc.getBlockZ());
-                    Files.SIGNS.saveFile();
-                    return;
+                HashMap<String, String> types = new HashMap<>();
+                types.put("Crystal", "ProtectionCrystal");
+                types.put("Scrambler", "Scrambler");
+                types.put("DestroyDust", "DestroyDust");
+                types.put("SuccessDust", "SuccessDust");
+                types.put("BlackScroll", "BlackScroll");
+                types.put("WhiteScroll", "WhiteScroll");
+                types.put("TransmogScroll", "TransmogScroll");
+                for (Entry<String, String> type : types.entrySet()) {
+                    if (line2.equalsIgnoreCase("{" + type.getKey() + "}")) {
+                        e.setLine(0, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line1")));
+                        e.setLine(1, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line2")));
+                        e.setLine(2, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line3")));
+                        e.setLine(3, Methods.color(Files.CONFIG.getFile().getString("Settings.SignOptions." + type.getValue() + "Style.Line4")));
+                        signs.set("Locations." + id + ".Type", type.getValue());
+                        signs.set("Locations." + id + ".World", loc.getWorld().getName());
+                        signs.set("Locations." + id + ".X", loc.getBlockX());
+                        signs.set("Locations." + id + ".Y", loc.getBlockY());
+                        signs.set("Locations." + id + ".Z", loc.getBlockZ());
+                        Files.SIGNS.saveFile();
+                        return;
+                    }
                 }
             }
         }
