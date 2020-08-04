@@ -753,13 +753,13 @@ public class ItemBuilder implements Cloneable {
         return this;
     }
 
-    public ItemBuilder addPatterns(List<String> stringList) {
-        stringList.forEach(this::addPattern);
+    public ItemBuilder addPattern(Pattern pattern) {
+        patterns.add(pattern);
         return this;
     }
 
-    public ItemBuilder addPattern(Pattern pattern) {
-        patterns.add(pattern);
+    public ItemBuilder addPatterns(List<String> stringList) {
+        stringList.forEach(this::addPattern);
         return this;
     }
 
@@ -985,6 +985,13 @@ public class ItemBuilder implements Cloneable {
         return this;
     }
 
+    public ItemBuilder addItemFlag(ItemFlag itemFlag) {
+        if (itemFlag != null) {
+            itemFlags.add(itemFlag);
+        }
+        return this;
+    }
+
     public ItemBuilder addItemFlags(List<String> flagStrings) {
         for (String flagString : flagStrings) {
             try {
@@ -992,13 +999,6 @@ public class ItemBuilder implements Cloneable {
                 addItemFlag(itemFlag);
             } catch (Exception ignored) {
             }
-        }
-        return this;
-    }
-
-    public ItemBuilder addItemFlag(ItemFlag itemFlag) {
-        if (itemFlag != null) {
-            itemFlags.add(itemFlag);
         }
         return this;
     }
