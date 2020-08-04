@@ -6,7 +6,7 @@ import com.plotsquared.core.plot.Plot;
 import org.bukkit.entity.Player;
 
 public class PlotSquared implements PlotSquaredVersion {
-    
+
     public boolean inTerritory(Player player) {
         PlotPlayer<Player> plotPlayer = BukkitUtil.getPlayer(player);
         Plot plot = plotPlayer.getCurrentPlot();
@@ -15,5 +15,5 @@ public class PlotSquared implements PlotSquaredVersion {
         }
         return plot.isAdded(plotPlayer.getUUID());
     }
-    
+
 }

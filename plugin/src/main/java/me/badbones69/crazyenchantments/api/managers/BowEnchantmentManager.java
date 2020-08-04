@@ -10,14 +10,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class BowEnchantmentManager {
-    
-    private static BowEnchantmentManager instance = new BowEnchantmentManager();
-    private List<BowEnchantment> bowEnchantments = new ArrayList<>();
-    
+
+    private static final BowEnchantmentManager instance = new BowEnchantmentManager();
+    private final List<BowEnchantment> bowEnchantments = new ArrayList<>();
+
     public static BowEnchantmentManager getInstance() {
         return instance;
     }
-    
+
     public void load() {
         bowEnchantments.clear();
         if (CEnchantments.PIERCING.isActivated()) {
@@ -33,9 +33,9 @@ public class BowEnchantmentManager {
             bowEnchantments.add(new BowEnchantment(CEnchantments.SNIPER, Arrays.asList(new PotionEffects(PotionEffectType.POISON, 5 * 20, 1)), false));
         }
     }
-    
+
     public List<BowEnchantment> getBowEnchantments() {
         return bowEnchantments;
     }
-    
+
 }

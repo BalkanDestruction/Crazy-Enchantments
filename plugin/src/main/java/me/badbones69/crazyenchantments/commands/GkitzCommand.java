@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 
 public class GkitzCommand implements CommandExecutor {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    
+
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLable, String[] args) {
         boolean isPlayer = sender instanceof Player;
@@ -125,9 +125,9 @@ public class GkitzCommand implements CommandExecutor {
         }
         return false;
     }
-    
+
     private boolean hasPermission(CommandSender sender, String permission) {
         return Methods.hasPermission(sender, permission, true);
     }
-    
+
 }

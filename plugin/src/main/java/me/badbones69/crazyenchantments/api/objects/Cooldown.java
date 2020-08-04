@@ -5,10 +5,10 @@ import me.badbones69.crazyenchantments.Methods;
 import java.util.Calendar;
 
 public class Cooldown {
-    
-    private GKitz gkit;
-    private Calendar cooldownTime;
-    
+
+    private final GKitz gkit;
+    private final Calendar cooldownTime;
+
     /**
      *
      */
@@ -16,29 +16,28 @@ public class Cooldown {
         this.gkit = null;
         this.cooldownTime = null;
     }
-    
+
     /**
-     *
-     * @param gkit The gkit this is tied to.
+     * @param gkit         The gkit this is tied to.
      * @param cooldownTime When the cooldown ends.
      */
     public Cooldown(GKitz gkit, Calendar cooldownTime) {
         this.gkit = gkit;
         this.cooldownTime = cooldownTime;
     }
-    
+
     public GKitz getGKitz() {
         return this.gkit;
     }
-    
+
     public Calendar getCooldown() {
         return this.cooldownTime;
     }
-    
+
     public boolean isCooldownOver() {
         return Calendar.getInstance().after(this.cooldownTime);
     }
-    
+
     public String getCooldownLeft(String message) {
         int day = 0;
         int hour = 0;
@@ -52,9 +51,9 @@ public class Cooldown {
             second += total;
         }
         return Methods.color(message.replace("%Day%", day + "").replace("%day%", day + "")
-        .replace("%Hour%", hour + "").replace("%hour%", hour + "")
-        .replace("%Minute%", minute + "").replace("%minute%", minute + "")
-        .replace("%Second%", second + "").replace("%second%", second + ""));
+                .replace("%Hour%", hour + "").replace("%hour%", hour + "")
+                .replace("%Minute%", minute + "").replace("%minute%", minute + "")
+                .replace("%Second%", second + "").replace("%second%", second + ""));
     }
-    
+
 }

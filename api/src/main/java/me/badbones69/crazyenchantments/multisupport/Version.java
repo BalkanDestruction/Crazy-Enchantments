@@ -24,9 +24,8 @@ public enum Version {
     Version(int versionInteger) {
         this.versionInteger = versionInteger;
     }
-    
+
     /**
-     *
      * @return Get the server's Minecraft version.
      */
     public static Version getCurrentVersion() {
@@ -48,9 +47,10 @@ public enum Version {
         }
         return currentVersion;
     }
-    
+
     /**
      * Get the latest version allowed by the Version class.
+     *
      * @return The latest version.
      */
     public static Version getLatestVersion() {
@@ -64,20 +64,53 @@ public enum Version {
             return v;
         } else {
             return latest;
-            
+
         }
     }
-    
+
     /**
+     * Checks to see if the current version is newer then the checked version.
      *
+     * @param version The version you are checking.
+     * @return True if newer then the checked version and false if the same or older.
+     */
+    public static boolean isNewer(Version version) {
+        if (currentVersion == null) getCurrentVersion();
+        return currentVersion.versionInteger > version.versionInteger || currentVersion.versionInteger == -2;
+    }
+
+    /**
+     * Checks to see if the current version is the same as the checked version.
+     *
+     * @param version The version you are checking.
+     * @return True if both the current and checked version is the same and false if otherwise.
+     */
+    public static boolean isSame(Version version) {
+        if (currentVersion == null) getCurrentVersion();
+        return currentVersion.versionInteger == version.versionInteger;
+    }
+
+    /**
+     * Checks to see if the current version is older then the checked version.
+     *
+     * @param version The version you are checking.
+     * @return True if older then the checked version and false if the same or newer.
+     */
+    public static boolean isOlder(Version version) {
+        if (currentVersion == null) getCurrentVersion();
+        return currentVersion.versionInteger < version.versionInteger || currentVersion.versionInteger == -1;
+    }
+
+    /**
      * @return The server's minecraft version as an integer.
      */
     public int getVersionInteger() {
         return this.versionInteger;
     }
-    
+
     /**
      * This checks if the current version is older, newer, or is the checked version.
+     *
      * @param version The version you are checking.
      * @return -1 if older, 0 if the same, and 1 if newer.
      */
@@ -94,35 +127,5 @@ public enum Version {
         }
         return result;
     }
-    
-    /**
-     * Checks to see if the current version is newer then the checked version.
-     * @param version The version you are checking.
-     * @return True if newer then the checked version and false if the same or older.
-     */
-    public static boolean isNewer(Version version) {
-        if (currentVersion == null) getCurrentVersion();
-        return currentVersion.versionInteger > version.versionInteger || currentVersion.versionInteger == -2;
-    }
-    
-    /**
-     * Checks to see if the current version is the same as the checked version.
-     * @param version The version you are checking.
-     * @return True if both the current and checked version is the same and false if otherwise.
-     */
-    public static boolean isSame(Version version) {
-        if (currentVersion == null) getCurrentVersion();
-        return currentVersion.versionInteger == version.versionInteger;
-    }
-    
-    /**
-     * Checks to see if the current version is older then the checked version.
-     * @param version The version you are checking.
-     * @return True if older then the checked version and false if the same or newer.
-     */
-    public static boolean isOlder(Version version) {
-        if (currentVersion == null) getCurrentVersion();
-        return currentVersion.versionInteger < version.versionInteger || currentVersion.versionInteger == -1;
-    }
-    
+
 }

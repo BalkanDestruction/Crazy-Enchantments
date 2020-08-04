@@ -42,12 +42,12 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class Armor implements Listener {
-    
-    private List<Player> fall = new ArrayList<>();
-    private HashMap<Player, HashMap<CEnchantments, Calendar>> timer = new HashMap<>();
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private Support support = Support.getInstance();
-    
+
+    private final List<Player> fall = new ArrayList<>();
+    private final HashMap<Player, HashMap<CEnchantments, Calendar>> timer = new HashMap<>();
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private final Support support = Support.getInstance();
+
     @EventHandler
     public void onEquip(ArmorEquipEvent e) {
         Player player = e.getPlayer();
@@ -103,7 +103,7 @@ public class Armor implements Listener {
             }
         }.runTaskAsynchronously(ce.getPlugin());
     }
-    
+
     //todo Make INSOMNIA work correctly. It should double the damage a player with the armor enchantment on does.
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDamage(EntityDamageByEntityEvent e) {
@@ -315,7 +315,7 @@ public class Armor implements Listener {
             }
         }.runTaskAsynchronously(ce.getPlugin());
     }
-    
+
     @EventHandler
     public void onAura(AuraActiveEvent e) {
         Player player = e.getPlayer();
@@ -354,10 +354,10 @@ public class Armor implements Listener {
                                     break;
                                 case ACIDRAIN:
                                     if (CEnchantments.ACIDRAIN.isActivated() && (!timer.containsKey(other) ||
-                                    (timer.containsKey(other) && !timer.get(other).containsKey(enchant)) ||
-                                    (timer.containsKey(other) && timer.get(other).containsKey(enchant) &&
-                                    cal.after(timer.get(other).get(enchant))
-                                    && CEnchantments.ACIDRAIN.chanceSuccessful()))) {
+                                            (timer.containsKey(other) && !timer.get(other).containsKey(enchant)) ||
+                                            (timer.containsKey(other) && timer.get(other).containsKey(enchant) &&
+                                                    cal.after(timer.get(other).get(enchant))
+                                                    && CEnchantments.ACIDRAIN.chanceSuccessful()))) {
                                         other.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 4 * 20, 1));
                                         int time = 35 - (level * 5);
                                         cal.add(Calendar.SECOND, time > 0 ? time : 5);
@@ -366,10 +366,10 @@ public class Armor implements Listener {
                                     break;
                                 case SANDSTORM:
                                     if (CEnchantments.SANDSTORM.isActivated() && (!timer.containsKey(other) ||
-                                    (timer.containsKey(other) && !timer.get(other).containsKey(enchant)) ||
-                                    (timer.containsKey(other) && timer.get(other).containsKey(enchant) &&
-                                    cal.after(timer.get(other).get(enchant))
-                                    && CEnchantments.SANDSTORM.chanceSuccessful()))) {
+                                            (timer.containsKey(other) && !timer.get(other).containsKey(enchant)) ||
+                                            (timer.containsKey(other) && timer.get(other).containsKey(enchant) &&
+                                                    cal.after(timer.get(other).get(enchant))
+                                                    && CEnchantments.SANDSTORM.chanceSuccessful()))) {
                                         other.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 10 * 20, 0));
                                         int time = 35 - (level * 5);
                                         cal.add(Calendar.SECOND, time > 0 ? time : 5);
@@ -378,10 +378,10 @@ public class Armor implements Listener {
                                     break;
                                 case RADIANT:
                                     if (CEnchantments.RADIANT.isActivated() && (!timer.containsKey(other) ||
-                                    (timer.containsKey(other) && !timer.get(other).containsKey(enchant)) ||
-                                    (timer.containsKey(other) && timer.get(other).containsKey(enchant) &&
-                                    cal.after(timer.get(other).get(enchant))
-                                    && CEnchantments.RADIANT.chanceSuccessful()))) {
+                                            (timer.containsKey(other) && !timer.get(other).containsKey(enchant)) ||
+                                            (timer.containsKey(other) && timer.get(other).containsKey(enchant) &&
+                                                    cal.after(timer.get(other).get(enchant))
+                                                    && CEnchantments.RADIANT.chanceSuccessful()))) {
                                         other.setFireTicks(5 * 20);
                                         int time = 20 - (level * 5);
                                         cal.add(Calendar.SECOND, Math.max(time, 0));
@@ -398,7 +398,7 @@ public class Armor implements Listener {
             }
         }.runTaskAsynchronously(ce.getPlugin());
     }
-    
+
     @SuppressWarnings({"deprecation", "squid:CallToDeprecatedMethod"})
     @EventHandler
     public void onMovement(PlayerMoveEvent e) {
@@ -436,7 +436,7 @@ public class Armor implements Listener {
                                 }
                             }
                             if (CEnchantments.IMPLANTS.isActivated() && ce.hasEnchantment(armor, CEnchantments.IMPLANTS) &&
-                            CEnchantments.IMPLANTS.chanceSuccessful(armor) && player.getFoodLevel() < 20) {
+                                    CEnchantments.IMPLANTS.chanceSuccessful(armor) && player.getFoodLevel() < 20) {
                                 new BukkitRunnable() {
                                     @Override
                                     public void run() {
@@ -458,7 +458,7 @@ public class Armor implements Listener {
                                 }.runTask(ce.getPlugin());
                             }
                             if (CEnchantments.ANGEL.isActivated() && ce.hasEnchantment(armor, CEnchantments.ANGEL)
-                            && SupportedPlugins.FACTIONS_MASSIVE_CRAFT.isPluginLoaded() || SupportedPlugins.FACTIONS_UUID.isPluginLoaded()) {
+                                    && SupportedPlugins.FACTIONS_MASSIVE_CRAFT.isPluginLoaded() || SupportedPlugins.FACTIONS_UUID.isPluginLoaded()) {
                                 int radius = 4 + ce.getLevel(armor, CEnchantments.ANGEL);
                                 new BukkitRunnable() {
                                     @Override
@@ -490,7 +490,7 @@ public class Armor implements Listener {
             }
         }.runTaskAsynchronously(ce.getPlugin());
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
@@ -544,14 +544,14 @@ public class Armor implements Listener {
             }
         }.runTaskAsynchronously(ce.getPlugin());
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerFallDamage(EntityDamageEvent e) {
         if (fall.contains(e.getEntity()) && e.getCause() == DamageCause.FALL) {
             e.setCancelled(true);
         }
     }
-    
+
     private void useHellForge(Player player, ItemStack item) {
         if (ce.hasEnchantment(item, CEnchantments.HELLFORGED)) {
             int armorDurability = Version.isNewer(Version.v1_12_R1) ? ((Damageable) item.getItemMeta()).getDamage() : item.getDurability();
@@ -577,5 +577,5 @@ public class Armor implements Listener {
             }
         }
     }
-    
+
 }

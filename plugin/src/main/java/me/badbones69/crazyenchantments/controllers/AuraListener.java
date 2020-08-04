@@ -18,15 +18,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AuraListener implements Listener {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private static List<CEnchantments> auraEnchantments = Arrays.asList(
-    CEnchantments.BLIZZARD,
-    CEnchantments.ACIDRAIN,
-    CEnchantments.SANDSTORM,
-    CEnchantments.RADIANT,
-    CEnchantments.INTIMIDATE);
-    
+
+    private static final List<CEnchantments> auraEnchantments = Arrays.asList(
+            CEnchantments.BLIZZARD,
+            CEnchantments.ACIDRAIN,
+            CEnchantments.SANDSTORM,
+            CEnchantments.RADIANT,
+            CEnchantments.INTIMIDATE);
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerMoveEvent(PlayerMoveEvent e) {
         if (!e.isCancelled()) {
@@ -60,7 +60,7 @@ public class AuraListener implements Listener {
             }
         }
     }
-    
+
     private List<Player> getNearByPlayers(Player player, int radius) {
         List<Player> players = new ArrayList<>();
         for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
@@ -72,5 +72,5 @@ public class AuraListener implements Listener {
         }
         return players;
     }
-    
+
 }

@@ -33,10 +33,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CECommand implements CommandExecutor {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private FileManager fileManager = FileManager.getInstance();
-    
+
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private final FileManager fileManager = FileManager.getInstance();
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLable, String[] args) {
         boolean isPlayer = sender instanceof Player;
@@ -159,7 +159,7 @@ public class CECommand implements CommandExecutor {
                             CEnchantment enchantment = ce.getEnchantmentFromName(args[1]);
                             if (enchantment != null) {
                                 sender.sendMessage(enchantment.getInfoName());
-                                enchantment.getInfoDescription().forEach(sender :: sendMessage);
+                                enchantment.getInfoDescription().forEach(sender::sendMessage);
                                 return true;
                             }
                             sender.sendMessage(Messages.NOT_AN_ENCHANTMENT.getMessage());
@@ -211,7 +211,7 @@ public class CECommand implements CommandExecutor {
                                                 location.setZ(Integer.parseInt(value));
                                             }
                                             break;
-                                        
+
                                     }
                                 } catch (Exception ignore) {
                                 }
@@ -242,7 +242,7 @@ public class CECommand implements CommandExecutor {
                             if (args.length >= 3) {
                                 if (!Methods.isInt(args[2])) {
                                     sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                    .replace("%Arg%", args[2]).replace("%arg%", args[2]));
+                                            .replace("%Arg%", args[2]).replace("%arg%", args[2]));
                                     return true;
                                 }
                                 amount = Integer.parseInt(args[2]);
@@ -283,7 +283,7 @@ public class CECommand implements CommandExecutor {
                         if (args.length >= 2) {
                             if (!Methods.isInt(args[1])) {
                                 sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                .replace("%Arg%", args[1]).replace("%arg%", args[1]));
+                                        .replace("%Arg%", args[1]).replace("%arg%", args[1]));
                                 return true;
                             }
                             amount = Integer.parseInt(args[1]);
@@ -320,7 +320,7 @@ public class CECommand implements CommandExecutor {
                         if (args.length >= 2) {
                             if (!Methods.isInt(args[1])) {
                                 sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                .replace("%Arg%", args[1]).replace("%arg%", args[1]));
+                                        .replace("%Arg%", args[1]).replace("%arg%", args[1]));
                                 return true;
                             }
                             amount = Integer.parseInt(args[1]);
@@ -358,7 +358,7 @@ public class CECommand implements CommandExecutor {
                             if (args.length >= 3) {
                                 if (!Methods.isInt(args[2])) {
                                     sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                    .replace("%Arg%", args[2]).replace("%arg%", args[2]));
+                                            .replace("%Arg%", args[2]).replace("%arg%", args[2]));
                                     return true;
                                 }
                                 amount = Integer.parseInt(args[2]);
@@ -379,7 +379,7 @@ public class CECommand implements CommandExecutor {
                             if (args.length >= 5) {
                                 if (!Methods.isInt(args[4])) {
                                     sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                    .replace("%Arg%", args[4]).replace("%arg%", args[4]));
+                                            .replace("%Arg%", args[4]).replace("%arg%", args[4]));
                                     return true;
                                 }
                                 percent = Integer.parseInt(args[4]);
@@ -422,7 +422,7 @@ public class CECommand implements CommandExecutor {
                             if (args.length >= 3) {
                                 if (!Methods.isInt(args[2])) {
                                     sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                    .replace("%Arg%", args[2]).replace("%arg%", args[2]));
+                                            .replace("%Arg%", args[2]).replace("%arg%", args[2]));
                                     return true;
                                 }
                                 i = Integer.parseInt(args[2]);
@@ -545,14 +545,14 @@ public class CECommand implements CommandExecutor {
                                     level = Methods.getRandomNumber(args[2]);
                                 } else {
                                     sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                    .replace("%Arg%", args[2]).replace("%arg%", args[2]));
+                                            .replace("%Arg%", args[2]).replace("%arg%", args[2]));
                                     return true;
                                 }
                             }
                             if (args.length >= 4) {
                                 if (!Methods.isInt(args[3])) {
                                     sender.sendMessage(Messages.NOT_A_NUMBER.getMessage()
-                                    .replace("%Arg%", args[3]).replace("%arg%", args[3]));
+                                            .replace("%Arg%", args[3]).replace("%arg%", args[3]));
                                     return true;
                                 }
                                 amount = Integer.parseInt(args[3]);
@@ -584,9 +584,9 @@ public class CECommand implements CommandExecutor {
             }
         }
     }
-    
+
     private boolean hasPermission(CommandSender sender, String permission) {
         return Methods.hasPermission(sender, permission, true);
     }
-    
+
 }

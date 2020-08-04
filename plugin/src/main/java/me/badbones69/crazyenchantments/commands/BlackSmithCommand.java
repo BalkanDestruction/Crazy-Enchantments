@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class BlackSmithCommand implements CommandExecutor {
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLable, String[] args) {
         if (!(sender instanceof Player)) {
@@ -21,9 +21,9 @@ public class BlackSmithCommand implements CommandExecutor {
         }
         return true;
     }
-    
+
     private boolean hasPermission(CommandSender sender, String permission) {
         return Methods.hasPermission(sender, permission, true);
     }
-    
+
 }

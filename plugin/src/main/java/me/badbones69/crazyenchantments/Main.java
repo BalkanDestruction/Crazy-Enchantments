@@ -25,11 +25,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Main extends JavaPlugin implements Listener {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private FileManager fileManager = FileManager.getInstance();
+
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private final FileManager fileManager = FileManager.getInstance();
     private boolean fixHealth;
-    
+
     @Override
     public void onEnable() {
         fileManager.logInfo(true).setup(this);
@@ -109,7 +109,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }.runTaskTimerAsynchronously(this, 5 * 20 * 60, 5 * 20 * 60);
     }
-    
+
     @Override
     public void onDisable() {
         if (ce.getAllyManager() != null) {
@@ -119,7 +119,7 @@ public class Main extends JavaPlugin implements Listener {
             ce.unloadCEPlayer(player);
         }
     }
-    
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         final Player player = e.getPlayer();
@@ -137,19 +137,19 @@ public class Main extends JavaPlugin implements Listener {
             public void run() {
                 if (player.getName().equals("BadBones69")) {
                     player.sendMessage(Methods.getPrefix() + Methods.color("&7This server is running your Crazy Enchantments Plugin. "
-                    + "&7It is running version &av" + ce.getPlugin().getDescription().getVersion() + "&7."));
+                            + "&7It is running version &av" + ce.getPlugin().getDescription().getVersion() + "&7."));
                 }
                 if (player.isOp()) {
                     Methods.hasUpdate(player);
                 }
             }
         }.
-        runTaskLaterAsynchronously(this, 20);
+                runTaskLaterAsynchronously(this, 20);
     }
-    
+
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
         ce.unloadCEPlayer(e.getPlayer());
     }
-    
+
 }

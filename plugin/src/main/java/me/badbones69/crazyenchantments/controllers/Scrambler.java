@@ -25,31 +25,32 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Scrambler implements Listener {
-    
+
     public static HashMap<Player, BukkitTask> roll = new HashMap<>();
-    private static CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private static final CrazyEnchantments ce = CrazyEnchantments.getInstance();
     private static ItemBuilder scramblerItem;
     private static ItemBuilder pointer;
     private static boolean animationToggle;
     private static String guiName;
-    
+
     public static void loadScrambler() {
         FileConfiguration config = Files.CONFIG.getFile();
         scramblerItem = new ItemBuilder()
-        .setMaterial(config.getString("Settings.Scrambler.Item"))
-        .setName(config.getString("Settings.Scrambler.Name"))
-        .setLore(config.getStringList("Settings.Scrambler.Lore"))
-        .setGlowing(config.getBoolean("Settings.Scrambler.Glowing"));
+                .setMaterial(config.getString("Settings.Scrambler.Item"))
+                .setName(config.getString("Settings.Scrambler.Name"))
+                .setLore(config.getStringList("Settings.Scrambler.Lore"))
+                .setGlowing(config.getBoolean("Settings.Scrambler.Glowing"));
         pointer = new ItemBuilder()
-        .setMaterial(config.getString("Settings.Scrambler.GUI.Pointer.Item"))
-        .setName(config.getString("Settings.Scrambler.GUI.Pointer.Name"))
-        .setLore(config.getStringList("Settings.Scrambler.GUI.Pointer.Lore"));
+                .setMaterial(config.getString("Settings.Scrambler.GUI.Pointer.Item"))
+                .setName(config.getString("Settings.Scrambler.GUI.Pointer.Name"))
+                .setLore(config.getStringList("Settings.Scrambler.GUI.Pointer.Lore"));
         animationToggle = Files.CONFIG.getFile().getBoolean("Settings.Scrambler.GUI.Toggle");
         guiName = Methods.color(Files.CONFIG.getFile().getString("Settings.Scrambler.GUI.Name"));
     }
-    
+
     /**
      * Get a new book that has been scrambled.
+     *
      * @param book The old book.
      * @return A new scrambled book.
      */
@@ -60,37 +61,39 @@ public class Scrambler implements Listener {
         }
         return new ItemStack(Material.AIR);
     }
-    
+
     /**
      * Get the scrambler itemstack.
+     *
      * @return The scramblers.
      */
     public static ItemStack getScramblers() {
         return getScramblers(1);
     }
-    
+
     /**
      * Get the scrambler itemstack.
+     *
      * @param amount The amount you want.
      * @return The scramblers.
      */
     public static ItemStack getScramblers(int amount) {
         return scramblerItem.clone().setAmount(amount).build();
     }
-    
+
     private static void setGlass(Inventory inv) {
         for (int slot = 0; slot < 9; slot++) {
             if (slot != 4) {
                 inv.setItem(slot, Methods.getRandomPaneColor().setName(" ").build());
                 inv.setItem(slot + 18, Methods.getRandomPaneColor().setName(" ").build());
-                
+
             } else {
                 inv.setItem(slot, pointer.build());
                 inv.setItem(slot + 18, pointer.build());
             }
         }
     }
-    
+
     public static void openScrambler(Player player, ItemStack book) {
         Inventory inventory = Bukkit.createInventory(null, 27, guiName);
         setGlass(inventory);
@@ -100,13 +103,13 @@ public class Scrambler implements Listener {
         player.openInventory(inventory);
         startScrambler(player, inventory, book);
     }
-    
+
     private static void startScrambler(final Player player, final Inventory inventory, final ItemStack book) {
         roll.put(player, new BukkitRunnable() {
             int time = 1;
             int full = 0;
             int open = 0;
-            
+
             @Override
             public void run() {
                 if (full <= 50) {//When Spinning
@@ -146,7 +149,7 @@ public class Scrambler implements Listener {
             }
         }.runTaskTimer(ce.getPlugin(), 1, 1));
     }
-    
+
     private static List<Integer> slowSpin() {
         List<Integer> slow = new ArrayList<>();
         int full = 120;
@@ -160,7 +163,7 @@ public class Scrambler implements Listener {
         }
         return slow;
     }
-    
+
     private static void moveItems(Inventory inv, Player player, ItemStack book) {
         List<ItemStack> items = new ArrayList<>();
         for (int slot = 9; slot > 8 && slot < 17; slot++) {
@@ -173,7 +176,7 @@ public class Scrambler implements Listener {
             inv.setItem(i + 10, items.get(i));
         }
     }
-    
+
     @EventHandler
     public void onReRoll(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
@@ -198,7 +201,7 @@ public class Scrambler implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void onInvClick(InventoryClickEvent e) {
         if (e.getInventory() != null) {
@@ -207,7 +210,7 @@ public class Scrambler implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void onScramblerClick(PlayerInteractEvent e) {
         ItemStack item = Methods.getItemInHand(e.getPlayer());
@@ -217,7 +220,7 @@ public class Scrambler implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         Player player = e.getPlayer();
@@ -227,5 +230,5 @@ public class Scrambler implements Listener {
         } catch (Exception ignore) {
         }
     }
-    
+
 }

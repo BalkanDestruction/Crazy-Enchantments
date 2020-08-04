@@ -45,10 +45,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Swords implements Listener {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private Support support = Support.getInstance();
-    
+
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private final Support support = Support.getInstance();
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDamage(EntityDamageByEntityEvent e) {
         if (!e.isCancelled() && !ce.isIgnoredEvent(e) && !ce.isIgnoredUUID(e.getDamager().getUniqueId()) && !support.isFriendly(e.getDamager(), e.getEntity())) {
@@ -396,7 +396,7 @@ public class Swords implements Listener {
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent e) {
         if (e.getEntity().getKiller() instanceof Player) {
@@ -420,14 +420,14 @@ public class Swords implements Listener {
                             ally.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 5 * 20, 1));
                             ally.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 5 * 20, 0));
                             ally.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 5 * 20, 1));
-                            
+
                         }
                     }
                 }
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDeath(EntityDeathEvent e) {
         if (e.getEntity().getKiller() instanceof Player) {
@@ -458,7 +458,7 @@ public class Swords implements Listener {
             }
         }
     }
-    
+
     private EquipmentSlot getSlot(int slot) {
         switch (slot) {
             case 1:
@@ -471,5 +471,5 @@ public class Swords implements Listener {
                 return EquipmentSlot.HEAD;
         }
     }
-    
+
 }

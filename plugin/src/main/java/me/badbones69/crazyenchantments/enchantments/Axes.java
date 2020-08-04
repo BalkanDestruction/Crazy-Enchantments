@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Axes implements Listener {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private Support support = Support.getInstance();
-    
+
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private final Support support = Support.getInstance();
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDamage(EntityDamageByEntityEvent e) {
         if (e.isCancelled() || ce.isIgnoredEvent(e)) return;
@@ -110,9 +110,9 @@ public class Axes implements Listener {
                 }
             }
         }
-        
+
     }
-    
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
@@ -128,7 +128,7 @@ public class Axes implements Listener {
             }
         }
     }
-    
+
     private void removeBadPotions(Player player) {
         ArrayList<PotionEffectType> bad = new ArrayList<>();
         bad.add(PotionEffectType.BLINDNESS);
@@ -145,5 +145,5 @@ public class Axes implements Listener {
             }
         }
     }
-    
+
 }

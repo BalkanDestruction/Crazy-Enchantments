@@ -31,74 +31,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 public class Tools implements Listener {
-    
-    private static Random random = new Random();
-    private int potionTime = 5 * 20;
-    private static CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    private static List<String> ignoreBlockTypes = Arrays.asList("air", "shulker_box", "chest", "head", "skull");
-    
-    @EventHandler
-    public void onPlayerClick(PlayerInteractEvent e) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                updateEffects(e.getPlayer());
-            }
-        }.runTaskAsynchronously(ce.getPlugin());
-    }
-    
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onBlockBreak(BlockBreakEvent e) {
-        Block block = e.getBlock();
-        Player player = e.getPlayer();
-        if (e.isCancelled() || ce.isIgnoredEvent(e) || ignoreBlockTypes(block)) {
-            return;
-        }
-        ItemStack item = Methods.getItemInHand(player);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                updateEffects(player);
-            }
-        }.runTaskAsynchronously(ce.getPlugin());
-        if (player.getGameMode() != GameMode.CREATIVE) {
-            List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(item);
-            if (enchantments.contains(CEnchantments.TELEPATHY.getEnchantment()) && !enchantments.contains(CEnchantments.BLAST.getEnchantment())) {
-                //This checks if the player is breaking a crop with harvester one. The harvester enchantment will control what happens with telepathy here.
-                if ((Hoes.getHarvesterCrops().contains(block.getType()) && enchantments.contains(CEnchantments.HARVESTER.getEnchantment())) ||
-                //This checks if the block is a spawner and if so the spawner classes will take care of this.
-                //If Epic Spawners is enabled then telepathy will give the item from the API.
-                //Otherwise CE will ignore the spawner in this event.
-                (!SupportedPlugins.EPIC_SPAWNERS.isPluginLoaded() && block.getType() == ce.getMaterial("SPAWNER", "MOB_SPAWNER"))) {
-                    return;
-                }
-                EnchantmentUseEvent event = new EnchantmentUseEvent(player, CEnchantments.TELEPATHY, item);
-                Bukkit.getPluginManager().callEvent(event);
-                if (!event.isCancelled()) {
-                    e.setExpToDrop(0);
-                    //setDropItems was added in 1.12+
-                    if (Version.isNewer(Version.v1_11_R1)) e.setDropItems(false);
-                    TelepathyDrop drop = getTelepathyDrops(new BlockProcessInfo(item, block));
-                    if (Methods.isInventoryFull(player)) {
-                        player.getWorld().dropItem(player.getLocation(), drop.getItem());
-                    } else {
-                        player.getInventory().addItem(drop.getItem());
-                    }
-                    if (drop.getSugarCaneBlocks().isEmpty()) {
-                        block.setType(Material.AIR);
-                    } else {
-                        drop.getSugarCaneBlocks().forEach(cane -> cane.setType(Material.AIR));
-                    }
-                    if (drop.hasXp()) {
-                        ExperienceOrb orb = block.getWorld().spawn(block.getLocation().add(.5, .5, .5), ExperienceOrb.class);
-                        orb.setExperience(drop.getXp());
-                    }
-                    Methods.removeDurability(item, player);
-                }
-            }
-        }
-    }
-    
+
+    private static final Random random = new Random();
+    private static final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+    private static final List<String> ignoreBlockTypes = Arrays.asList("air", "shulker_box", "chest", "head", "skull");
+    private final int potionTime = 5 * 20;
+
     @SuppressWarnings("squid:CallToDeprecatedMethod")
     public static TelepathyDrop getTelepathyDrops(BlockProcessInfo processInfo) {
         ItemStack item = processInfo.getItem();
@@ -161,7 +99,7 @@ public class Tools implements Listener {
         if (block.getType() == Material.COCOA) {
             //Coco drops 2-3 beans.
             itemDrop.setMaterial("COCOA_BEANS", "INK_SACK:3")
-            .setAmount(ce.getNMSSupport().isFullyGrown(block) ? random.nextInt(2) + 2 : 1);
+                    .setAmount(ce.getNMSSupport().isFullyGrown(block) ? random.nextInt(2) + 2 : 1);
         }
         //Changes ink sacks to lapis if on 1.12.2-
         if (Version.isOlder(Version.v1_13_R2) && itemDrop.getMaterial() == Material.matchMaterial("INK_SACK") && itemDrop.getDamage() != 3) {
@@ -174,7 +112,7 @@ public class Tools implements Listener {
         }
         return new TelepathyDrop(itemDrop.build(), xp, sugarCaneBlocks);
     }
-    
+
     private static List<Block> getSugarCaneBlocks(Block block) {
         List<Block> sugarCaneBlocks = new ArrayList<>();
         Block cane = block;
@@ -182,45 +120,11 @@ public class Tools implements Listener {
             sugarCaneBlocks.add(cane);
             cane = cane.getLocation().add(0, 1, 0).getBlock();
         }
-        
+
         Collections.reverse(sugarCaneBlocks);
         return sugarCaneBlocks;
     }
-    
-    private void updateEffects(Player player) {
-        ItemStack item = Methods.getItemInHand(player);
-        if (ce.hasEnchantments(item)) {
-            List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(item);
-            if (enchantments.contains(CEnchantments.HASTE.getEnchantment())) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        EnchantmentUseEvent event = new EnchantmentUseEvent(player, CEnchantments.HASTE, item);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (!event.isCancelled()) {
-                            int power = ce.getLevel(item, CEnchantments.HASTE);
-                            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
-                            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, potionTime, power - 1));
-                        }
-                    }
-                }.runTask(ce.getPlugin());
-            }
-            if (enchantments.contains(CEnchantments.OXYGENATE.getEnchantment())) {
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        EnchantmentUseEvent event = new EnchantmentUseEvent(player, CEnchantments.OXYGENATE, item);
-                        Bukkit.getPluginManager().callEvent(event);
-                        if (!event.isCancelled()) {
-                            player.removePotionEffect(PotionEffectType.WATER_BREATHING);
-                            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, potionTime, 5));
-                        }
-                    }
-                }.runTask(ce.getPlugin());
-            }
-        }
-    }
-    
+
     private static boolean ignoreBlockTypes(Block block) {
         for (String name : ignoreBlockTypes) {
             if (block.getType().name().toLowerCase().contains(name)) {
@@ -229,7 +133,7 @@ public class Tools implements Listener {
         }
         return false;
     }
-    
+
     private static boolean hasOreXP(Block block) {
         switch (block.getType()) {
             case COAL_ORE:
@@ -242,7 +146,7 @@ public class Tools implements Listener {
                 return false;
         }
     }
-    
+
     private static boolean isOre(Block block) {
         if (block.getType() == ce.getMaterial("NETHER_QUARTZ_ORE", "QUARTZ_ORE")) {
             return true;
@@ -260,7 +164,7 @@ public class Tools implements Listener {
                 return false;
         }
     }
-    
+
     private static ItemStack getOreDrop(Block block) {
         ItemBuilder dropItem = new ItemBuilder();
         if (block.getType() == ce.getMaterial("NETHER_QUARTZ_ORE", "QUARTZ_ORE")) {
@@ -295,5 +199,101 @@ public class Tools implements Listener {
         }
         return dropItem.build();
     }
-    
+
+    @EventHandler
+    public void onPlayerClick(PlayerInteractEvent e) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                updateEffects(e.getPlayer());
+            }
+        }.runTaskAsynchronously(ce.getPlugin());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onBlockBreak(BlockBreakEvent e) {
+        Block block = e.getBlock();
+        Player player = e.getPlayer();
+        if (e.isCancelled() || ce.isIgnoredEvent(e) || ignoreBlockTypes(block)) {
+            return;
+        }
+        ItemStack item = Methods.getItemInHand(player);
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                updateEffects(player);
+            }
+        }.runTaskAsynchronously(ce.getPlugin());
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(item);
+            if (enchantments.contains(CEnchantments.TELEPATHY.getEnchantment()) && !enchantments.contains(CEnchantments.BLAST.getEnchantment())) {
+                //This checks if the player is breaking a crop with harvester one. The harvester enchantment will control what happens with telepathy here.
+                if ((Hoes.getHarvesterCrops().contains(block.getType()) && enchantments.contains(CEnchantments.HARVESTER.getEnchantment())) ||
+                        //This checks if the block is a spawner and if so the spawner classes will take care of this.
+                        //If Epic Spawners is enabled then telepathy will give the item from the API.
+                        //Otherwise CE will ignore the spawner in this event.
+                        (!SupportedPlugins.EPIC_SPAWNERS.isPluginLoaded() && block.getType() == ce.getMaterial("SPAWNER", "MOB_SPAWNER"))) {
+                    return;
+                }
+                EnchantmentUseEvent event = new EnchantmentUseEvent(player, CEnchantments.TELEPATHY, item);
+                Bukkit.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    e.setExpToDrop(0);
+                    //setDropItems was added in 1.12+
+                    if (Version.isNewer(Version.v1_11_R1)) e.setDropItems(false);
+                    TelepathyDrop drop = getTelepathyDrops(new BlockProcessInfo(item, block));
+                    if (Methods.isInventoryFull(player)) {
+                        player.getWorld().dropItem(player.getLocation(), drop.getItem());
+                    } else {
+                        player.getInventory().addItem(drop.getItem());
+                    }
+                    if (drop.getSugarCaneBlocks().isEmpty()) {
+                        block.setType(Material.AIR);
+                    } else {
+                        drop.getSugarCaneBlocks().forEach(cane -> cane.setType(Material.AIR));
+                    }
+                    if (drop.hasXp()) {
+                        ExperienceOrb orb = block.getWorld().spawn(block.getLocation().add(.5, .5, .5), ExperienceOrb.class);
+                        orb.setExperience(drop.getXp());
+                    }
+                    Methods.removeDurability(item, player);
+                }
+            }
+        }
+    }
+
+    private void updateEffects(Player player) {
+        ItemStack item = Methods.getItemInHand(player);
+        if (ce.hasEnchantments(item)) {
+            List<CEnchantment> enchantments = ce.getEnchantmentsOnItem(item);
+            if (enchantments.contains(CEnchantments.HASTE.getEnchantment())) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        EnchantmentUseEvent event = new EnchantmentUseEvent(player, CEnchantments.HASTE, item);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            int power = ce.getLevel(item, CEnchantments.HASTE);
+                            player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, potionTime, power - 1));
+                        }
+                    }
+                }.runTask(ce.getPlugin());
+            }
+            if (enchantments.contains(CEnchantments.OXYGENATE.getEnchantment())) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        EnchantmentUseEvent event = new EnchantmentUseEvent(player, CEnchantments.OXYGENATE, item);
+                        Bukkit.getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+                            player.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, potionTime, 5));
+                        }
+                    }
+                }.runTask(ce.getPlugin());
+            }
+        }
+    }
+
 }

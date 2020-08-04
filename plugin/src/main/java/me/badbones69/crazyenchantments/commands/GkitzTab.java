@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GkitzTab implements TabCompleter {
-    
-    private CrazyEnchantments ce = CrazyEnchantments.getInstance();
-    
+
+    private final CrazyEnchantments ce = CrazyEnchantments.getInstance();
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String commandLable, String[] args) {
         List<String> completions = new ArrayList<>();
@@ -39,5 +39,5 @@ public class GkitzTab implements TabCompleter {
         }
         return completions;
     }
-    
+
 }
