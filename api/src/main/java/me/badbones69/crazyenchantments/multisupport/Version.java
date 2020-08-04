@@ -3,7 +3,7 @@ package me.badbones69.crazyenchantments.multisupport;
 import org.bukkit.Bukkit;
 
 public enum Version {
-    
+
     TOO_OLD(-1),
     v1_7_R1(171), v1_7_R2(172), v1_7_R3(173), v1_7_R4(174),
     v1_8_R1(181), v1_8_R2(182), v1_8_R3(183),
@@ -13,13 +13,15 @@ public enum Version {
     v1_12_R1(1121),
     v1_13_R2(1132),
     v1_14_R1(1141),
+    v1_15_R1(1151),
+    v1_16_R1(1161),
     TOO_NEW(-2);
-    
+
     private static Version currentVersion;
     private static Version latest;
-    private int versionInteger;
-    
-    private Version(int versionInteger) {
+    private final int versionInteger;
+
+    Version(int versionInteger) {
         this.versionInteger = versionInteger;
     }
     

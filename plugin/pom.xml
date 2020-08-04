@@ -90,17 +90,11 @@
             <version>1.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency> <!-- Spigot-Api -->
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
+        <dependency>
+            <groupId>com.tuinity</groupId>
+            <artifactId>tuinity-api</artifactId>
             <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>bungeecord-chat</artifactId>
-                    <groupId>net.md-5</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency> <!-- NBT-API -->
             <groupId>de.tr7zw</groupId>
